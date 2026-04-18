@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1a1a">
+<title>小说术语 · 速记卡</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;900&family=ZCOOL+XiaoWei&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --paper:#f4ede0;
+    --paper-dark:#e8dcc4;
+    --red:#c0392b;
+    --red-deep:#8b1e1e;
+    --gold:#b8860b;
+    --green:#4a6741;
+    --blue-ink:#2c3e50;
+    --muted:#7a6f5d;
+    --line:#3a2e22;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Noto Serif SC",serif;
+    height:100vh;
+    height:100dvh;
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  body{
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(184,134,11,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(192,57,43,0.03) 0%, transparent 50%);
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* 顶部栏 */
+  .topbar{
+    padding:14px 16px 10px;
+    flex-shrink:0;
+  }
+  .top-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  }
+  .brand{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:15px;
+    letter-spacing:0.15em;
+    color:var(--ink);
+  }
+  .brand .dot{color:var(--red-deep);margin:0 4px}
+  .menu-btn{
+    width:36px;height:36px;
+    border:1.5px solid var(--line);
+    background:transparent;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:4px;
+    border-radius:2px;
+  }
+  .menu-btn span{
+    width:16px;height:1.5px;
+    background:var(--ink);
+  }
+
+  /* 进度条 */
+  .progress-wrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:11px;
+    color:var(--muted);
+    font-family:"JetBrains Mono",monospace;
+  }
+  .progress-bar{
+    flex:1;
+    height:3px;
+    background:var(--paper-dark);
+    position:relative;
+    border:0.5px solid var(--line);
+  }
+  .progress-fill{
+    position:absolute;
+    left:0;top:0;
+    height:100%;
+    background:var(--red-deep);
+    transition:width 0.3s;
+  }
+  .progress-text{
+    white-space:nowrap;
+    letter-spacing:0.1em;
+  }
+  .mastered-count{
+    color:var(--red-deep);
+    font-weight:700;
+  }
+
+  /* 卡片容器 */
+  .card-stage{
+    flex:1;
+    position:relative;
+    padding:8px 20px 20px;
+    display:flex;
+    align-items:stretch;
+    overflow:hidden;
+    min-height:0;
+  }
+
+  .swiper{
+    width:100%;
+    height:100%;
+    position:relative;
+    touch-action:pan-y;
+  }
+
+  /* 卡片 */
+  .card{
+    position:absolute;
+    inset:0;
+    perspective:1500px;
+    transition:transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+  }
+  .card.leaving-left{transform:translateX(-120%) rotate(-8deg);opacity:0}
+  .card.leaving-right{transform:translateX(120%) rotate(8deg);opacity:0}
+  .card.entering{animation:enter 0.4s cubic-bezier(0.4,0,0.2,1) backwards}
+  @keyframes enter{
+    from{transform:translateY(20px) scale(0.95);opacity:0}
+    to{transform:translateY(0) scale(1);opacity:1}
+  }
+
+  .card-inner{
+    position:relative;
+    width:100%;height:100%;
+    transition:transform 0.6s cubic-bezier(0.4,0,0.2,1);
+    transform-style:preserve-3d;
+  }
+  .card.flipped .card-inner{transform:rotateY(180deg)}
+
+  .card-face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    display:flex;
+    flex-direction:column;
+    border-radius:4px;
+    overflow:hidden;
+  }
+
+  /* 正面 */
+  .card-front{
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    box-shadow:
+      3px 3px 0 var(--line),
+      6px 6px 20px rgba(0,0,0,0.15);
+    padding:24px 22px;
+  }
+  .card-front::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border:1px solid var(--line);
+    opacity:0.3;
+    pointer-events:none;
+  }
+
+  .card-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    z-index:1;
+  }
+  .card-idx{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    color:var(--muted);
+    letter-spacing:0.15em;
+  }
+  .cat-tag{
+    padding:3px 10px;
+    font-size:11px;
+    letter-spacing:0.15em;
+    color:var(--paper);
+    background:var(--ink);
+  }
+  .cat-tag.cat-叙事{background:var(--red-deep)}
+  .cat-tag.cat-情节{background:var(--blue-ink)}
+  .cat-tag.cat-环境{background:var(--green)}
+  .cat-tag.cat-人物{background:var(--gold)}
+  .cat-tag.cat-语言{background:#6b4423}
+  .cat-tag.cat-结构{background:#4a4a4a}
+
+  .term-main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    position:relative;
+    z-index:1;
+    padding:20px 0;
+  }
+  .term-ornament{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:13px;
+    color:var(--muted);
+    letter-spacing:0.4em;
+    margin-bottom:18px;
+  }
+  .term-ornament::before,.term-ornament::after{
+    content:"—";
+    margin:0 8px;
+    color:var(--red);
+  }
+  .term-zh{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:46px;
+    line-height:1.15;
+    letter-spacing:0.08em;
+    color:var(--ink);
+    position:relative;
+    padding:0 4px;
+  }
+  .term-zh::after{
+    content:"";
+    position:absolute;
+    left:50%;bottom:-8px;
+    transform:translateX(-50%);
+    width:60%;
+    height:3px;
+    background:var(--red);
+  }
+
+  .card-foot{
+    padding-top:12px;
+    border-top:1px solid var(--line);
+    position:relative;
+    z-index:1;
+    text-align:center;
+  }
+  .flip-cta{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 18px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:13px;
+    letter-spacing:0.2em;
+    border:none;
+    cursor:pointer;
+    border-radius:2px;
+  }
+  .flip-cta .arrow{
+    display:inline-block;
+    animation:pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{transform:translateX(0)}
+    50%{transform:translateX(3px)}
+  }
+
+  /* 背面 */
+  .card-back{
+    background:var(--paper-dark);
+    border:1.5px solid var(--line);
+    box-shadow:
+      3px 3px 0 var(--line),
+      6px 6px 20px rgba(0,0,0,0.15);
+    transform:rotateY(180deg);
+    padding:18px 20px 16px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .card-back::-webkit-scrollbar{width:3px}
+  .card-back::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px}
+
+  .back-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding-bottom:10px;
+    border-bottom:2px solid var(--red);
+    margin-bottom:14px;
+  }
+  .back-term{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:22px;
+    color:var(--red-deep);
+    letter-spacing:0.05em;
+  }
+  .back-idx{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:0.15em;
+  }
+
+  .section{margin-bottom:14px}
+  .section-label{
+    font-family:"JetBrains Mono",monospace;
+    font-size:9px;
+    color:var(--muted);
+    letter-spacing:0.2em;
+    margin-bottom:5px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .section-label::before{
+    content:"";
+    width:12px;height:1px;
+    background:var(--red);
+  }
+  .section-content{
+    font-size:14px;
+    line-height:1.7;
+    color:var(--ink);
+  }
+  .effects-list{list-style:none;padding:0}
+  .effects-list li{
+    padding:3px 0 3px 16px;
+    position:relative;
+    font-size:13.5px;
+    line-height:1.6;
+  }
+  .effects-list li::before{
+    content:"※";
+    position:absolute;
+    left:0;top:4px;
+    color:var(--red);
+    font-size:10px;
+  }
+  .source-box{
+    font-size:12px;
+    color:var(--blue-ink);
+    font-style:italic;
+    padding:8px 10px;
+    background:rgba(255,255,255,0.4);
+    border-left:2px solid var(--blue-ink);
+    line-height:1.55;
+  }
+
+  /* 底部操作栏 */
+  .bottom-bar{
+    flex-shrink:0;
+    padding:12px 20px calc(20px + env(safe-area-inset-bottom));
+    display:flex;
+    gap:10px;
+    align-items:center;
+    border-top:1px solid var(--line);
+    background:rgba(232,220,196,0.6);
+    backdrop-filter:blur(8px);
+  }
+  .nav-btn{
+    width:48px;height:48px;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    font-family:"ZCOOL XiaoWei",serif;
+    color:var(--ink);
+    border-radius:2px;
+    flex-shrink:0;
+  }
+  .nav-btn:active{background:var(--ink);color:var(--paper)}
+  .nav-btn:disabled{opacity:0.3;cursor:not-allowed}
+
+  .status-btns{
+    flex:1;
+    display:flex;
+    gap:8px;
+  }
+  .status-btn{
+    flex:1;
+    padding:12px 8px;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:13px;
+    letter-spacing:0.15em;
+    cursor:pointer;
+    border-radius:2px;
+    transition:all 0.15s;
+  }
+  .status-btn.again{color:var(--red-deep);border-color:var(--red-deep)}
+  .status-btn.again:active{background:var(--red-deep);color:var(--paper)}
+  .status-btn.master{color:var(--green);border-color:var(--green)}
+  .status-btn.master:active{background:var(--green);color:var(--paper)}
+  .status-btn.active{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .status-btn.again.active{background:var(--red-deep);border-color:var(--red-deep);color:var(--paper)}
+  .status-btn.master.active{background:var(--green);border-color:var(--green);color:var(--paper)}
+
+  /* 掌握标记 */
+  .mastered-stamp{
+    position:absolute;
+    top:16px;right:16px;
+    padding:4px 12px;
+    border:2px solid var(--green);
+    color:var(--green);
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:13px;
+    letter-spacing:0.3em;
+    transform:rotate(8deg);
+    background:rgba(74,103,65,0.05);
+    opacity:0;
+    z-index:2;
+    transition:opacity 0.3s;
+  }
+  .card.is-mastered .mastered-stamp{opacity:1}
+
+  .again-stamp{
+    position:absolute;
+    top:16px;right:16px;
+    padding:4px 12px;
+    border:2px solid var(--red-deep);
+    color:var(--red-deep);
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:13px;
+    letter-spacing:0.3em;
+    transform:rotate(8deg);
+    background:rgba(139,30,30,0.05);
+    opacity:0;
+    z-index:2;
+    transition:opacity 0.3s;
+  }
+  .card.is-again .again-stamp{opacity:1}
+
+  /* 侧边菜单 */
+  .menu-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(26,26,26,0.5);
+    backdrop-filter:blur(4px);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.3s;
+    z-index:100;
+  }
+  .menu-overlay.open{opacity:1;pointer-events:auto}
+
+  .menu-panel{
+    position:fixed;
+    top:0;right:0;
+    width:min(85%,340px);
+    height:100%;
+    background:var(--paper);
+    transform:translateX(100%);
+    transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    z-index:101;
+    padding:20px;
+    overflow-y:auto;
+    border-left:2px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .menu-panel.open{transform:translateX(0)}
+
+  .menu-title{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:20px;
+    letter-spacing:0.1em;
+    padding-bottom:10px;
+    border-bottom:2px double var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .close-btn{
+    width:30px;height:30px;
+    border:1px solid var(--line);
+    background:transparent;
+    cursor:pointer;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .menu-section-title{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:0.2em;
+    margin-bottom:8px;
+  }
+
+  .filter-chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .chip{
+    padding:6px 12px;
+    border:1.5px solid var(--line);
+    background:transparent;
+    font-family:"Noto Serif SC",serif;
+    font-size:13px;
+    cursor:pointer;
+    color:var(--ink);
+    border-radius:2px;
+  }
+  .chip.active{background:var(--red-deep);color:var(--paper);border-color:var(--red-deep)}
+
+  .stat-box{
+    padding:12px;
+    border:1.5px solid var(--line);
+    background:var(--paper-dark);
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
+    text-align:center;
+  }
+  .stat-item{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .stat-num{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:24px;
+    color:var(--ink);
+  }
+  .stat-num.master{color:var(--green)}
+  .stat-num.again{color:var(--red-deep)}
+  .stat-label{
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:0.15em;
+  }
+
+  .menu-btns{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .menu-btn-wide{
+    padding:12px;
+    border:1.5px solid var(--line);
+    background:transparent;
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:14px;
+    letter-spacing:0.15em;
+    cursor:pointer;
+    text-align:center;
+  }
+  .menu-btn-wide:active{background:var(--ink);color:var(--paper)}
+  .menu-btn-wide.danger{color:var(--red-deep);border-color:var(--red-deep)}
+
+  /* 刷新时的完成页 */
+  .complete-screen{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+    text-align:center;
+    background:var(--paper);
+    gap:16px;
+  }
+  .complete-screen h2{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:32px;
+    letter-spacing:0.1em;
+    color:var(--red-deep);
+  }
+  .complete-screen p{
+    font-size:14px;
+    color:var(--muted);
+    line-height:1.8;
+  }
+  .complete-stamp{
+    padding:10px 24px;
+    border:3px double var(--red);
+    color:var(--red);
+    font-family:"ZCOOL XiaoWei",serif;
+    letter-spacing:0.3em;
+    transform:rotate(-3deg);
+    margin-top:10px;
+  }
+
+  /* 滑动提示 */
+  .swipe-hint{
+    position:fixed;
+    bottom:50%;
+    padding:8px 14px;
+    background:rgba(26,26,26,0.85);
+    color:var(--paper);
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:12px;
+    letter-spacing:0.2em;
+    border-radius:20px;
+    opacity:0;
+    pointer-events:none;
+    z-index:50;
+    transition:opacity 0.2s;
+  }
+  .swipe-hint.show{opacity:1}
+  .swipe-hint.left{left:20px}
+  .swipe-hint.right{right:20px}
+
+  /* 横屏限制 */
+  @media(min-width:768px){
+    .card-stage{padding:20px calc(50% - 200px) 20px}
+    .bottom-bar{padding:12px calc(50% - 200px)}
+    .topbar{padding:14px calc(50% - 200px) 10px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="top-row">
+    <div class="brand">高考小说<span class="dot">·</span>术语速记</div>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="progress-wrap">
+    <span class="progress-text" id="currentIdx">01 / 30</span>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-text"><span class="mastered-count" id="masteredCount">0</span> 掌握</span>
+  </div>
+</div>
+
+<div class="card-stage">
+  <div class="swiper" id="swiper"></div>
+</div>
+
+<div class="bottom-bar">
+  <button class="nav-btn" id="prevBtn" aria-label="上一张">‹</button>
+  <div class="status-btns">
+    <button class="status-btn again" id="againBtn">再看</button>
+    <button class="status-btn master" id="masterBtn">已掌握</button>
+  </div>
+  <button class="nav-btn" id="nextBtn" aria-label="下一张">›</button>
+</div>
+
+<!-- 侧边菜单 -->
+<div class="menu-overlay" id="menuOverlay"></div>
+<aside class="menu-panel" id="menuPanel">
+  <div class="menu-title">
+    <span>学习设置</span>
+    <button class="close-btn" id="closeMenu">×</button>
+  </div>
+
+  <div>
+    <div class="menu-section-title">学习进度</div>
+    <div class="stat-box">
+      <div class="stat-item">
+        <div class="stat-num" id="statTotal">30</div>
+        <div class="stat-label">总数</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num master" id="statMaster">0</div>
+        <div class="stat-label">已掌握</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num again" id="statAgain">0</div>
+        <div class="stat-label">待复习</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="menu-section-title">分类筛选</div>
+    <div class="filter-chips" id="filterChips">
+      <button class="chip active" data-filter="all">全部(30)</button>
+      <button class="chip" data-filter="叙事">叙事(7)</button>
+      <button class="chip" data-filter="情节">情节(6)</button>
+      <button class="chip" data-filter="环境">环境(4)</button>
+      <button class="chip" data-filter="人物">人物(4)</button>
+      <button class="chip" data-filter="语言">语言(4)</button>
+      <button class="chip" data-filter="结构">结构(3)</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="menu-section-title">模式</div>
+    <div class="filter-chips" id="modeChips">
+      <button class="chip active" data-mode="all">全部</button>
+      <button class="chip" data-mode="again">只看"再看"</button>
+      <button class="chip" data-mode="unreviewed">未标记</button>
+    </div>
+  </div>
+
+  <div class="menu-btns">
+    <button class="menu-btn-wide" id="shuffleBtn">随机打乱顺序</button>
+    <button class="menu-btn-wide" id="orderedBtn">恢复默认顺序</button>
+    <button class="menu-btn-wide danger" id="resetBtn">重置所有标记</button>
+  </div>
+
+  <div style="margin-top:auto;font-size:11px;color:var(--muted);line-height:1.7;padding-top:16px;border-top:1px dashed var(--line)">
+    ◆ 点击卡片翻面<br>
+    ◆ 左右滑动切换卡片<br>
+    ◆ 标记"已掌握"后,下次可隐藏<br>
+    ◆ 标记"再看"用于重点复习
+  </div>
+</aside>
+
+<!-- 滑动提示 -->
+<div class="swipe-hint left" id="hintLeft">‹ 上一张</div>
+<div class="swipe-hint right" id="hintRight">下一张 ›</div>
+
+<script>
+const cards = [
+  {id:1,cat:"叙事",term:"第一人称叙事",def:"以\"我\"的口吻讲述,\"我\"是故事中的参与者或见证者,视野受限于\"我\"的所见所感。",effects:["增强真实感与代入感,拉近与读者距离","便于抒发内心情感、呈现主观感受","视野受限制造悬念,留下想象空间","\"我\"作为旁观者可烘托/评价他人"],source:"2023·新Ⅰ卷《给儿子》以\"你会…\"\"你得…\"的第二人称与第一人称交织;2024·新Ⅰ卷《放牛记》第一人称自述"},
+  {id:2,cat:"叙事",term:"第三人称叙事",def:"以全知或旁观者视角讲述,叙述者不在故事之中,可自由切换时空与人物内心。",effects:["叙述自由,便于宏观把握情节","可呈现多人物多场景","全知视角可深入任何人物内心","客观冷静,便于展开时代图景"],source:"2024·新Ⅱ卷《千里江山图》以全知视角展开爱情与革命双线"},
+  {id:3,cat:"叙事",term:"限知视角",def:"叙述仅限于某一人物(常为主人公或儿童)的所知所感,超出其认知范围的信息不呈现。",effects:["制造信息差,营造悬念","增强代入感与真实性","通过认知局限反映人物性格/心智","引发读者主动填补空白"],source:"2021·新Ⅰ卷《石门阵》借王木匠讲述制造限知;儿童视角在童年回忆类文本高频"},
+  {id:4,cat:"叙事",term:"儿童视角",def:"借儿童的眼光、语言、心理来叙述,呈现与成人不同的观察方式。",effects:["语言天真朴素,形成独特趣味","简化复杂事物,以纯真反衬成人世界","通过儿童的不解制造反讽","便于展现成长主题"],source:"2022·新Ⅱ卷《到橘子林去》以小岫视角展现童趣;2021·新Ⅱ卷教小孩子作文相关"},
+  {id:5,cat:"叙事",term:"双线结构",def:"小说有两条并行或交织的叙事线索,可为明暗线、主副线,或人物A线/人物B线。",effects:["拓展叙事容量,丰富主题层次","两线互为映衬、对比或因果","明暗配合制造悬念与张力","将个人命运与时代背景交织"],source:"2024·新Ⅱ卷《千里江山图》D项\"个人爱情与革命斗争交融\"即双线"},
+  {id:6,cat:"叙事",term:"时间标记",def:"在叙述中频繁插入\"一年以后\"\"现在想来\"\"他知道时\"等时间标示语,打破线性时序。",effects:["形成过去—现在—未来的时空交错","制造历史纵深感与回望视角","暗示结局,增强宿命感或思考意味","让叙事节奏张弛有度"],source:"2024·新Ⅱ卷《千里江山图》第9题直接考查此技巧"},
+  {id:7,cat:"叙事",term:"倒叙",def:"将事件结局或关键片段提前,再回溯前因的叙述方式。",effects:["开篇即制造悬念,抓住读者","形成结构张力,引发追因心理","突出强调被提前的内容","便于聚焦主题情感"],source:"常见于小说开头的\"他死了\"\"多年以后…\"等句式"},
+  {id:8,cat:"叙事",term:"插叙",def:"在主线叙事中暂时中断,插入与主线相关的往事或背景信息,再回到主线。",effects:["补充背景信息,丰满人物形象","解释事件因果,使情节完整","调节叙事节奏,避免平铺直叙","与主线形成对比或呼应"],source:"2023·全国乙卷《长出一地的好荞麦》插入德贵早年务农记忆"},
+  {id:9,cat:"叙事",term:"补叙",def:"在故事主要情节结束后,对前文关键信息做补充说明。",effects:["解开前文悬念,使情节完整","推翻/深化读者原有认知,带来震撼","强化人物形象或主题","常与反转结尾配合使用"],source:"常见于悬疑类小说的结尾"},
+  {id:10,cat:"情节",term:"伏笔",def:"对后文将出现的情节、人物在前文做隐蔽的预先提示或暗示。",effects:["使情节发展合乎逻辑,不显突兀","前后照应,结构严谨","读者回读时有\"原来如此\"的阅读快感","暗示主题或人物命运"],source:"2023·全国乙卷《长出一地的好荞麦》A项\"颗粒无收的事实…埋下了伏笔\""},
+  {id:11,cat:"情节",term:"铺垫",def:"为后文情节高潮或人物行为提前做大量、显性的准备与酝酿。",effects:["使后文情节出现自然可信","强化情节高潮的冲击力","突出被铺垫对象的重要性","(与伏笔区别:铺垫显,伏笔隐)"],source:"小说开头的环境描写、人物出场前的氛围营造常为铺垫"},
+  {id:12,cat:"情节",term:"反转结尾",def:"在结尾处情节走向与前文铺垫方向相反,打破读者预期(欧·亨利式)。",effects:["出人意料又在情理之中,强化戏剧性","深化或颠覆主题","引发读者对前文细节的重新审视","留下强烈阅读印象"],source:"《项链》《最后一片常春藤叶》为典型"},
+  {id:13,cat:"情节",term:"开放式结尾",def:"故事结尾不给出明确结局,留下未解之谜或多种可能的走向。",effects:["留白引发联想,拓展想象空间","主题多解,增加思想深度","避免说教,让读者参与意义建构","余韵悠长,回味无穷"],source:"2023·全国乙卷《长出一地的好荞麦》以\"梦见好荞麦\"作开放/象征式收束"},
+  {id:14,cat:"情节",term:"卒章显志",def:"在文章最后点明主旨或题目含义的写法。",effects:["主题升华,画龙点睛","照应题目,使结构圆合","在情感积蓄后迸发,冲击力强","便于读者把握创作意图"],source:"2024·甲卷结尾\"霜降后…一些人把双脚踩在了泥泞的路上\"即卒章显志"},
+  {id:15,cat:"情节",term:"线索",def:"贯穿全文、串联情节或人物的核心事物、意象或人物关系。",effects:["结构作用:串联松散情节,使结构严谨","象征作用:成为主题/情感的载体","推动情节发展或引发矛盾","反复出现可形成回环呼应"],source:"2021·新Ⅰ卷《石门阵》\"门\"作为多层含义的线索(第9题)"},
+  {id:16,cat:"环境",term:"自然环境描写",def:"对自然景物(山川、季节、天气、动植物等)的描写。",effects:["交代故事发生的时间、地点、背景","渲染氛围,奠定情感基调","烘托人物心理,暗示人物命运","推动情节(如雨夜引发冲突)","象征隐喻主题"],source:"2025·新Ⅰ卷《鼓书艺人》开篇长江描写;2024·甲卷霜降夜"},
+  {id:17,cat:"环境",term:"社会环境描写",def:"对人物所处的时代背景、社会风貌、风俗习惯、人际关系的描写。",effects:["交代时代背景,奠定故事基调","揭示社会矛盾与人物命运的根源","使人物形象更具典型性","深化对时代/社会的主题反思"],source:"2024·新Ⅱ卷《千里江山图》A项\"点出时代氛围\";2023·新Ⅱ卷《社戏》乡土风俗描写"},
+  {id:18,cat:"环境",term:"细节描写",def:"对人物言行、物件、场景中某一微小特征的精细刻画。",effects:["使描写对象具体可感,富有画面","刻画人物性格,暗示人物心理","暗藏隐喻,引发深层联想","以小见大,折射时代/主题"],source:"2024·新Ⅱ卷《千里江山图》C项机要室\"微笑\"与门房\"笑\"的细节"},
+  {id:19,cat:"环境",term:"衬托",def:"用次要事物突出主要事物。正衬以同类衬同类,反衬以对立面突出。",effects:["正衬:强化、渲染主要事物的特征","反衬:形成强烈对比,突出主要对象","以景衬情,使情感更浓烈","以静衬动/以乐衬哀增强张力"],source:"2024·新Ⅱ卷《千里江山图》C项以\"笑\"反衬\"紧张诡异气氛\""},
+  {id:20,cat:"人物",term:"正面描写",def:"直接刻画人物的外貌、语言、动作、神态、心理。",effects:["直接呈现人物特征,形象鲜明","语言描写显个性与身份","动作神态显性格与情绪","心理描写显内在动机与矛盾"],source:"2025·新Ⅰ卷《鼓书艺人》直接描写方宝庆的言行"},
+  {id:21,cat:"人物",term:"侧面描写",def:"通过他人评价、环境烘托、对比映衬来间接表现人物。",effects:["避免直白,使形象含蓄立体","通过他人反应增强可信度","环境烘托使人物与场景融为一体","对比映衬突出核心特征"],source:"2021·新Ⅰ卷《石门阵》A项\"再写村民们的表情神态\"侧面表现王木匠"},
+  {id:22,cat:"人物",term:"对比映衬",def:"将两个或两组人物/情境放在一起,通过差异突显各自特征。",effects:["使对比双方的特征都更鲜明","深化矛盾冲突,推动情节","形成主题的多元呈现","引发读者的价值判断"],source:"2022·新Ⅰ卷《伍子胥》将\"义士渔夫\"与\"普通渔人\"对比(第9题)"},
+  {id:23,cat:"人物",term:"人物弧光",def:"人物在故事发展中性格、认知或命运发生的显著变化轨迹。",effects:["使人物立体、丰满、可信","推动情节内在动力","呈现成长/堕落/顿悟的主题","引发读者的情感共鸣"],source:"2021·乙卷《秦琼卖马》杨成岳买卖过程中的心理变化(第9题)"},
+  {id:24,cat:"语言",term:"比喻",def:"将甲事物比作乙事物,通过相似点增强表现力(明喻/暗喻/借喻)。",effects:["化抽象为具象,化陌生为熟悉","增强语言的形象性与感染力","可赋予描写对象新的审美特质","折射作者的情感态度"],source:"2025·新Ⅰ卷《鼓书艺人》B项\"江水像条怒龙\"比喻考查"},
+  {id:25,cat:"语言",term:"象征",def:"用具体可感的事物表现抽象的概念、情感或主题。",effects:["化抽象为具体,含蓄隽永","承载多重主题含义","形成文本深层结构,引发回味","使文本具有哲理深度"],source:"2021·新Ⅰ卷《石门阵》\"门\"的多层象征;2024·甲卷\"霜降\"象征"},
+  {id:26,cat:"语言",term:"反复",def:"有意重复使用某个词语、句子或句式,以强化表达。",effects:["强调情感或观念,加深印象","形成叙事节奏,产生音乐感","营造氛围,起渲染作用","延宕情节,制造紧张或期待"],source:"2021·新Ⅰ卷《石门阵》第8题\"门\"\"石头门\"反复手法的效果"},
+  {id:27,cat:"语言",term:"口语化/方言",def:"使用日常口语、俚语或地方方言进行叙述或对话。",effects:["真实再现人物身份与地域","富有生活气息与地方特色","拉近与读者距离,亲切自然","与典雅书面语形成对比张力"],source:"2023·全国乙卷《长出一地的好荞麦》德贵\"俺见河滩地长草就像长俺心口窝\""},
+  {id:28,cat:"结构",term:"故事套故事",def:"主故事中嵌套另一个故事,形成叙事的多层结构。",effects:["扩展叙事容量,丰富文本层次","内外故事互为映照,深化主题","叙述者身份制造可靠性的张力","形成间离效果,引发思考"],source:"2021·新Ⅰ卷《石门阵》D项\"故事套故事的结构\"即考查此项"},
+  {id:29,cat:"结构",term:"首尾呼应",def:"开头与结尾在情节、意象、语言或主题上形成照应。",effects:["使结构圆合完整,浑然一体","深化主题,形成回环之美","前后对照,凸显变化或不变","强化阅读记忆与情感冲击"],source:"2023·全国乙卷《长出一地的好荞麦》C项\"结尾…照应了题目\""},
+  {id:30,cat:"结构",term:"历史与现实交织",def:"将历史事件/传说/典故与现实叙事并置或穿插,形成多重时空对话。",effects:["增加文本的文化厚度与历史感","使现实主题获得传统支撑","形成古今对照,引发反思","扩展意义空间,余韵深远"],source:"2022·新Ⅰ卷《伍子胥》历史改写为当代寓言;2025·新Ⅰ卷《鼓书艺人》引用楚怀王巫山神女典故"}
+];
+
+// 状态管理
+const state = {
+  filter: 'all',
+  mode: 'all',
+  order: cards.map(c => c.id),  // 当前卡片顺序(id数组)
+  pos: 0,                        // 当前位置
+  mastered: new Set(),
+  again: new Set(),
+};
+
+// 获取当前可见的卡片id列表
+function getVisibleIds(){
+  return state.order.filter(id => {
+    const c = cards.find(x => x.id === id);
+    if(state.filter !== 'all' && c.cat !== state.filter) return false;
+    if(state.mode === 'again' && !state.again.has(id)) return false;
+    if(state.mode === 'unreviewed' && (state.mastered.has(id) || state.again.has(id))) return false;
+    return true;
+  });
+}
+
+const swiper = document.getElementById('swiper');
+const currentIdxEl = document.getElementById('currentIdx');
+const progressFill = document.getElementById('progressFill');
+const masteredCount = document.getElementById('masteredCount');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const againBtn = document.getElementById('againBtn');
+const masterBtn = document.getElementById('masterBtn');
+
+function buildCardHTML(c){
+  const isMaster = state.mastered.has(c.id);
+  const isAgain = state.again.has(c.id);
+  return `
+    <div class="card ${isMaster ? 'is-mastered' : ''} ${isAgain ? 'is-again' : ''}" data-id="${c.id}">
+      <div class="mastered-stamp">已 · 掌 · 握</div>
+      <div class="again-stamp">待 · 复 · 习</div>
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-head">
+            <span class="card-idx">NO.${String(c.id).padStart(2,'0')}</span>
+            <span class="cat-tag cat-${c.cat}">${c.cat}</span>
+          </div>
+          <div class="term-main">
+            <div class="term-ornament">术 语</div>
+            <div class="term-zh">${c.term}</div>
+          </div>
+          <div class="card-foot">
+            <button class="flip-cta">点击翻面 <span class="arrow">▸</span></button>
+          </div>
+        </div>
+        <div class="card-face card-back">
+          <div class="back-head">
+            <span class="back-term">${c.term}</span>
+            <span class="back-idx">${String(c.id).padStart(2,'0')}/30</span>
+          </div>
+          <div class="section">
+            <div class="section-label">DEF · 定义</div>
+            <div class="section-content">${c.def}</div>
+          </div>
+          <div class="section">
+            <div class="section-label">EFFECTS · 常见效果</div>
+            <ul class="effects-list section-content">
+              ${c.effects.map(e => `<li>${e}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="section">
+            <div class="section-label">SOURCE · 真题出处</div>
+            <div class="source-box">${c.source}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function render(){
+  const visible = getVisibleIds();
+
+  if(visible.length === 0){
+    swiper.innerHTML = `
+      <div class="complete-screen">
+        <h2>暂无卡片</h2>
+        <p>当前筛选条件下<br>没有符合的卡片</p>
+        <p style="font-size:12px">请尝试切换菜单中的分类或模式</p>
+      </div>
+    `;
+    currentIdxEl.textContent = '0 / 0';
+    progressFill.style.width = '0%';
+    masterBtn.disabled = true;
+    againBtn.disabled = true;
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    return;
+  }
+
+  if(state.pos >= visible.length) state.pos = visible.length - 1;
+  if(state.pos < 0) state.pos = 0;
+
+  const currentId = visible[state.pos];
+  const card = cards.find(c => c.id === currentId);
+
+  swiper.innerHTML = buildCardHTML(card);
+  const cardEl = swiper.querySelector('.card');
+  cardEl.classList.add('entering');
+
+  // 卡片点击翻面
+  cardEl.addEventListener('click', (e) => {
+    if(e.target.closest('button')) return;
+    cardEl.classList.toggle('flipped');
+  });
+
+  // 更新 UI
+  currentIdxEl.textContent = `${String(state.pos+1).padStart(2,'0')} / ${String(visible.length).padStart(2,'0')}`;
+  progressFill.style.width = `${((state.pos+1)/visible.length)*100}%`;
+  masteredCount.textContent = state.mastered.size;
+
+  // 按钮状态
+  masterBtn.classList.toggle('active', state.mastered.has(currentId));
+  againBtn.classList.toggle('active', state.again.has(currentId));
+  masterBtn.disabled = false;
+  againBtn.disabled = false;
+  prevBtn.disabled = state.pos === 0;
+  nextBtn.disabled = state.pos === visible.length - 1;
+
+  // 更新菜单中的统计
+  document.getElementById('statTotal').textContent = cards.length;
+  document.getElementById('statMaster').textContent = state.mastered.size;
+  document.getElementById('statAgain').textContent = state.again.size;
+}
+
+function navigate(direction){
+  const visible = getVisibleIds();
+  if(visible.length === 0) return;
+  const newPos = state.pos + direction;
+  if(newPos < 0 || newPos >= visible.length) return;
+
+  const cardEl = swiper.querySelector('.card');
+  if(cardEl){
+    cardEl.classList.add(direction > 0 ? 'leaving-left' : 'leaving-right');
+  }
+
+  setTimeout(() => {
+    state.pos = newPos;
+    render();
+  }, 200);
+}
+
+// 上下切换
+prevBtn.addEventListener('click', () => navigate(-1));
+nextBtn.addEventListener('click', () => navigate(1));
+
+// 掌握/再看
+masterBtn.addEventListener('click', () => {
+  const visible = getVisibleIds();
+  const currentId = visible[state.pos];
+  if(state.mastered.has(currentId)){
+    state.mastered.delete(currentId);
+  } else {
+    state.mastered.add(currentId);
+    state.again.delete(currentId);
+    // 自动切换到下一张
+    setTimeout(() => {
+      if(state.pos < getVisibleIds().length - 1){
+        navigate(1);
+      } else {
+        render();
+      }
+    }, 300);
+    render();
+    return;
+  }
+  render();
+});
+
+againBtn.addEventListener('click', () => {
+  const visible = getVisibleIds();
+  const currentId = visible[state.pos];
+  if(state.again.has(currentId)){
+    state.again.delete(currentId);
+  } else {
+    state.again.add(currentId);
+    state.mastered.delete(currentId);
+    // 自动切换到下一张
+    setTimeout(() => {
+      if(state.pos < getVisibleIds().length - 1){
+        navigate(1);
+      } else {
+        render();
+      }
+    }, 300);
+    render();
+    return;
+  }
+  render();
+});
+
+// 触摸滑动
+let touchStartX = 0;
+let touchStartY = 0;
+let touchMoved = false;
+const hintLeft = document.getElementById('hintLeft');
+const hintRight = document.getElementById('hintRight');
+
+swiper.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  touchMoved = false;
+}, {passive:true});
+
+swiper.addEventListener('touchmove', (e) => {
+  const dx = e.touches[0].clientX - touchStartX;
+  const dy = e.touches[0].clientY - touchStartY;
+  if(Math.abs(dx) > 20 && Math.abs(dx) > Math.abs(dy)){
+    touchMoved = true;
+    if(dx > 30) hintLeft.classList.add('show');
+    if(dx < -30) hintRight.classList.add('show');
+  }
+}, {passive:true});
+
+swiper.addEventListener('touchend', (e) => {
+  hintLeft.classList.remove('show');
+  hintRight.classList.remove('show');
+  if(!touchMoved) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)){
+    if(dx > 0) navigate(-1);
+    else navigate(1);
+  }
+}, {passive:true});
+
+// 键盘支持(桌面)
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowLeft') navigate(-1);
+  else if(e.key === 'ArrowRight') navigate(1);
+  else if(e.key === ' '){
+    e.preventDefault();
+    const cardEl = swiper.querySelector('.card');
+    if(cardEl) cardEl.classList.toggle('flipped');
+  }
+});
+
+// 菜单
+const menuBtn = document.getElementById('menuBtn');
+const menuPanel = document.getElementById('menuPanel');
+const menuOverlay = document.getElementById('menuOverlay');
+const closeMenu = document.getElementById('closeMenu');
+
+function openMenu(){
+  menuPanel.classList.add('open');
+  menuOverlay.classList.add('open');
+}
+function closeMenuFn(){
+  menuPanel.classList.remove('open');
+  menuOverlay.classList.remove('open');
+}
+menuBtn.addEventListener('click', openMenu);
+closeMenu.addEventListener('click', closeMenuFn);
+menuOverlay.addEventListener('click', closeMenuFn);
+
+// 筛选
+document.getElementById('filterChips').addEventListener('click', (e) => {
+  if(e.target.classList.contains('chip')){
+    document.querySelectorAll('#filterChips .chip').forEach(c => c.classList.remove('active'));
+    e.target.classList.add('active');
+    state.filter = e.target.dataset.filter;
+    state.pos = 0;
+    render();
+  }
+});
+
+document.getElementById('modeChips').addEventListener('click', (e) => {
+  if(e.target.classList.contains('chip')){
+    document.querySelectorAll('#modeChips .chip').forEach(c => c.classList.remove('active'));
+    e.target.classList.add('active');
+    state.mode = e.target.dataset.mode;
+    state.pos = 0;
+    render();
+  }
+});
+
+// 打乱/恢复
+document.getElementById('shuffleBtn').addEventListener('click', () => {
+  state.order = [...state.order].sort(() => Math.random() - 0.5);
+  state.pos = 0;
+  render();
+  closeMenuFn();
+});
+
+document.getElementById('orderedBtn').addEventListener('click', () => {
+  state.order = cards.map(c => c.id);
+  state.pos = 0;
+  render();
+  closeMenuFn();
+});
+
+// 重置
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if(confirm('确定要重置所有标记吗?')){
+    state.mastered.clear();
+    state.again.clear();
+    render();
+  }
+});
+
+// 初始渲染
+render();
+</script>
+</body>
+</html>
