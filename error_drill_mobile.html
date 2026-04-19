@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>选择题易错点·训练</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a1a1a; --paper:#f4ede0; --paper-dark:#e8dcc4; --paper-light:#faf5e8;
+    --red:#c0392b; --red-deep:#8b1e1e; --red-bg:#fce8e4;
+    --gold:#b8860b; --gold-bg:#faf3e0;
+    --green:#4a6741; --green-bg:#e3ebdb;
+    --blue-ink:#2c3e50; --blue-bg:#e3ecf3;
+    --muted:#7a6f5d; --line:#3a2e22;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  html,body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Noto Serif SC",serif;
+    overflow-x:hidden;
+  }
+  body{
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(184,134,11,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(192,57,43,0.03) 0%, transparent 50%);
+    min-height:100vh;
+    padding-bottom:90px;
+  }
+
+  /* ============ 顶部 ============ */
+  .top-fixed{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:var(--paper);
+    border-bottom:1.5px solid var(--line);
+  }
+  .header{
+    padding:14px 14px 8px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+  .header h1{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:18px;
+    letter-spacing:0.1em;
+  }
+  .header h1 .accent{color:var(--red-deep)}
+  .header .sub{
+    font-size:10px;color:var(--muted);
+    letter-spacing:0.2em;margin-top:2px;
+    font-family:"ZCOOL XiaoWei",serif;
+  }
+
+  /* 难度切换 */
+  .level-row{
+    display:flex;
+    padding:8px 10px;
+    gap:6px;
+    align-items:center;
+  }
+  .level-btn{
+    flex:1;
+    padding:9px 4px;
+    background:var(--paper-dark);
+    border:1.5px solid var(--line);
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:13px;
+    cursor:pointer;
+    letter-spacing:0.1em;
+    color:var(--ink);
+    transition:all 0.15s;
+    text-align:center;
+  }
+  .level-btn:active{transform:scale(0.96)}
+  .level-btn.active{background:var(--red-deep);color:var(--paper);border-color:var(--red-deep)}
+  .level-btn .ct{
+    display:block;font-size:9px;
+    font-family:"JetBrains Mono",monospace;
+    opacity:0.7;margin-top:2px;
+  }
+  .ref-icon{
+    width:42px;height:42px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    font-size:18px;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* 进度条 */
+  .progress-row{
+    padding:6px 14px 10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--paper-light);
+  }
+  .progress-num{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    flex-shrink:0;
+  }
+  .progress-num .hl{color:var(--red-deep);font-weight:700}
+  .progress-bar{
+    flex:1;
+    height:5px;
+    background:var(--paper-dark);
+    border:1px solid var(--line);
+    position:relative;
+  }
+  .progress-fill{
+    position:absolute;
+    left:0;top:0;height:100%;
+    background:linear-gradient(90deg,var(--red),var(--gold));
+    transition:width 0.3s;
+  }
+  .score-mini{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    flex-shrink:0;
+  }
+  .score-mini .ok{color:var(--green);font-weight:700}
+  .score-mini .ng{color:var(--red);font-weight:700}
+
+  /* ============ 单题区 ============ */
+  .stage{
+    padding:14px 12px;
+  }
+  .question-card{
+    background:var(--paper-light);
+    border:1.5px solid var(--line);
+    box-shadow:3px 3px 0 var(--line);
+    padding:16px 14px 14px;
+    position:relative;
+  }
+  .question-card.answered.correct{border-left:4px solid var(--green)}
+  .question-card.answered.wrong{border-left:4px solid var(--red)}
+
+  .q-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    padding-bottom:6px;
+    border-bottom:1px dashed var(--line);
+  }
+  .q-num{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:0.1em;
+  }
+  .q-num .num{color:var(--red-deep);font-weight:700;font-size:16px;margin:0 2px}
+  .q-status{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:12px;
+    padding:2px 8px;
+    border:1px solid;
+    display:none;
+  }
+  .q-status.show{display:inline-block}
+  .q-status.ok{color:var(--green);border-color:var(--green);background:var(--green-bg)}
+  .q-status.ng{color:var(--red);border-color:var(--red);background:var(--red-bg)}
+
+  .q-text{
+    font-size:16px;
+    line-height:1.85;
+    padding:6px 2px 12px;
+    text-align:justify;
+  }
+  .q-text .highlight-answer{
+    background:rgba(192,57,43,0.22);
+    padding:1px 3px;
+    border-bottom:2.5px solid var(--red);
+    font-weight:700;
+    color:var(--red-deep);
+    border-radius:2px;
+    animation:flashIn 0.5s ease;
+  }
+  @keyframes flashIn{
+    0%{background:rgba(192,57,43,0.55)}
+    100%{background:rgba(192,57,43,0.22)}
+  }
+
+  /* ============ 应为对照 ============ */
+  .corrections{
+    display:none;
+    margin-top:8px;
+    padding:10px 12px;
+    background:var(--gold-bg);
+    border:1px solid var(--gold);
+    border-left:3px solid var(--gold);
+    animation:slideIn 0.4s ease;
+  }
+  .corrections.show{display:block}
+  .corrections-title{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:11px;
+    color:var(--gold);
+    letter-spacing:0.2em;
+    margin-bottom:6px;
+    font-weight:700;
+  }
+  .correction-item{
+    font-size:13.5px;
+    line-height:1.7;
+    margin-bottom:3px;
+    display:flex;
+    align-items:flex-start;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .correction-item:last-child{margin-bottom:0}
+  .corr-wrong{
+    background:rgba(192,57,43,0.15);
+    color:var(--red-deep);
+    padding:1px 6px;
+    border:1px solid var(--red);
+    text-decoration:line-through;
+    text-decoration-thickness:1.5px;
+    font-weight:600;
+  }
+  .corr-arrow{color:var(--gold);font-weight:700;margin:0 2px}
+  .corr-right{
+    background:var(--green-bg);
+    color:var(--green);
+    padding:1px 6px;
+    border:1px solid var(--green);
+    font-weight:700;
+  }
+  .corr-no-right{
+    color:var(--muted);
+    font-size:12px;
+    font-style:italic;
+  }
+
+  /* ============ 类型按钮 ============ */
+  .type-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:6px;
+    margin-top:12px;
+  }
+  .type-btn{
+    padding:10px 8px;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    font-family:"Noto Serif SC",serif;
+    font-size:12.5px;
+    cursor:pointer;
+    color:var(--ink);
+    transition:all 0.12s;
+    text-align:left;
+    line-height:1.35;
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    min-height:44px;
+  }
+  .type-btn:active:not(:disabled){background:var(--ink);color:var(--paper);transform:scale(0.97)}
+  .type-btn:disabled{cursor:not-allowed;opacity:0.7}
+  .type-btn .type-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    font-weight:700;
+    flex-shrink:0;
+  }
+  .type-btn[data-type="0"] .type-num{background:var(--green)}
+  .type-btn[data-type="0"]{
+    grid-column:span 2;
+    background:linear-gradient(to right, var(--green-bg), var(--paper));
+    border-color:var(--green);
+  }
+  .type-btn.selected-wrong{
+    background:var(--red-bg);
+    border-color:var(--red);
+    border-width:2px;
+  }
+  .type-btn.selected-wrong .type-num{background:var(--red)}
+  .type-btn.is-answer{
+    background:var(--green-bg);
+    border-color:var(--green);
+    border-width:2px;
+  }
+  .type-btn.is-answer .type-num{background:var(--green)}
+  .type-btn.is-answer::after{
+    content:"✓";
+    position:absolute;
+    right:8px;
+    color:var(--green);
+    font-size:16px;
+    font-weight:700;
+  }
+
+  /* ============ 解析 ============ */
+  .explanation{
+    margin-top:12px;
+    padding:12px 12px;
+    background:rgba(255,255,255,0.6);
+    border-left:3px solid var(--red-deep);
+    font-size:13.5px;
+    line-height:1.75;
+    display:none;
+    animation:slideIn 0.4s ease;
+  }
+  .explanation.show{display:block}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+  .explanation-label{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:11px;
+    color:var(--red-deep);
+    letter-spacing:0.2em;
+    margin-bottom:5px;
+    display:block;
+    font-weight:700;
+  }
+  .explanation .key{
+    background:rgba(192,57,43,0.15);
+    padding:1px 4px;
+    font-weight:600;
+  }
+
+  /* ============ 底部导航(固定) ============ */
+  .bottom-nav{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    background:var(--paper);
+    border-top:1.5px solid var(--line);
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    display:flex;
+    gap:8px;
+    z-index:60;
+    box-shadow:0 -3px 12px rgba(0,0,0,0.08);
+  }
+  .nav-arrow{
+    width:50px;height:46px;
+    border:1.5px solid var(--line);
+    background:var(--paper-dark);
+    font-size:22px;
+    cursor:pointer;
+    font-family:"ZCOOL XiaoWei",serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--ink);
+    flex-shrink:0;
+  }
+  .nav-arrow:active:not(:disabled){background:var(--ink);color:var(--paper);transform:scale(0.95)}
+  .nav-arrow:disabled{opacity:0.3}
+  .nav-info{
+    flex:1;
+    height:46px;
+    border:1.5px solid var(--line);
+    background:var(--paper-light);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px;
+    letter-spacing:0.1em;
+    color:var(--ink);
+  }
+  .nav-info .cur{color:var(--red-deep);font-weight:700;font-size:15px}
+  .nav-info .div{color:var(--muted);margin:0 6px}
+  .nav-info .total{color:var(--muted)}
+
+  /* ============ 错型对照浮窗 ============ */
+  .ref-panel{
+    position:fixed;
+    top:0;right:0;
+    width:min(380px,90vw);
+    height:100vh;
+    background:var(--paper);
+    border-left:2px solid var(--line);
+    box-shadow:-6px 0 24px rgba(0,0,0,0.2);
+    transform:translateX(100%);
+    transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index:200;
+    overflow-y:auto;
+    padding:20px 16px 80px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .ref-panel.open{transform:translateX(0)}
+  .ref-panel h2{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:18px;
+    color:var(--red-deep);
+    letter-spacing:0.1em;
+    margin-bottom:8px;
+    padding-bottom:6px;
+    border-bottom:2px solid var(--red);
+    padding-right:40px;
+  }
+  .ref-close{
+    position:absolute;
+    top:12px;right:12px;
+    width:32px;height:32px;
+    background:var(--ink);color:var(--paper);
+    border:none;font-size:16px;cursor:pointer;
+    font-family:"JetBrains Mono",monospace;
+  }
+  .ref-intro{
+    font-size:12px;color:var(--muted);
+    line-height:1.7;margin-top:6px;
+  }
+  .ref-item{
+    margin-top:14px;
+    padding:12px;
+    background:var(--paper-light);
+    border:1px solid var(--line);
+    border-left:4px solid var(--red);
+  }
+  .ref-item.t2{border-left-color:#8b4513}
+  .ref-item.t3{border-left-color:#2c7873}
+  .ref-item.t4{border-left-color:#6b3fa0}
+  .ref-item.t5{border-left-color:#a0742a}
+  .ref-item.t0{border-left-color:var(--green)}
+  .ref-title{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:14.5px;
+    font-weight:600;
+    margin-bottom:6px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .ref-title .nb{
+    display:inline-flex;
+    align-items:center;justify-content:center;
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--red);color:var(--paper);
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;font-weight:700;
+  }
+  .ref-item.t2 .nb{background:#8b4513}
+  .ref-item.t3 .nb{background:#2c7873}
+  .ref-item.t4 .nb{background:#6b3fa0}
+  .ref-item.t5 .nb{background:#a0742a}
+  .ref-item.t0 .nb{background:var(--green)}
+  .ref-desc{font-size:12.5px;line-height:1.7}
+  .ref-eg{
+    margin-top:6px;
+    padding:6px 8px;
+    background:rgba(255,255,255,0.5);
+    font-size:11.5px;
+    color:var(--muted);
+    line-height:1.6;
+    font-style:italic;
+  }
+  .ref-eg b{color:var(--red-deep);font-weight:600;font-style:normal}
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0.4);
+    z-index:150;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.3s;
+  }
+  .overlay.open{opacity:1;pointer-events:auto}
+
+  /* ============ 完成结算 ============ */
+  .summary{
+    margin-top:14px;
+    padding:18px 14px;
+    background:var(--ink);
+    color:var(--paper);
+    border:2px double var(--gold);
+  }
+  .summary h2{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:18px;color:var(--gold);
+    text-align:center;letter-spacing:0.15em;
+    margin-bottom:12px;
+  }
+  .summary-grid{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:8px;margin-bottom:14px;
+  }
+  .summary-stat{
+    padding:12px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--paper);
+    text-align:center;
+  }
+  .stat-value{
+    font-family:"JetBrains Mono",monospace;
+    font-size:24px;font-weight:700;color:var(--gold);
+  }
+  .stat-label{
+    font-size:10px;letter-spacing:0.15em;
+    opacity:0.8;margin-top:2px;
+  }
+  .breakdown{
+    background:rgba(255,255,255,0.05);
+    padding:10px;
+  }
+  .breakdown h3{
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:13px;margin-bottom:8px;
+    color:var(--gold);letter-spacing:0.1em;
+  }
+  .err-row{
+    display:flex;align-items:center;gap:8px;
+    margin-bottom:5px;font-size:11px;
+  }
+  .err-row .l{flex:1;opacity:0.9}
+  .err-row .b{flex:1.5;height:6px;background:rgba(255,255,255,0.1);position:relative}
+  .err-row .b-fill{position:absolute;left:0;top:0;height:100%;background:var(--red)}
+  .err-row .c{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;min-width:30px;text-align:right;
+  }
+  .summary-actions{
+    display:flex;gap:6px;margin-top:14px;
+    flex-direction:column;
+  }
+  .summary-btn{
+    padding:10px;background:var(--gold);
+    color:var(--ink);border:none;
+    font-family:"ZCOOL XiaoWei",serif;
+    font-size:13px;cursor:pointer;
+    letter-spacing:0.15em;
+  }
+  .summary-btn.secondary{
+    background:transparent;color:var(--paper);
+    border:1px solid var(--paper);
+  }
+  .reset-bottom{
+    margin-top:14px;text-align:center;
+  }
+  .reset-bottom button{
+    padding:7px 16px;background:transparent;
+    border:1px solid var(--muted);color:var(--muted);
+    font-family:"ZCOOL XiaoWei",serif;font-size:12px;
+    cursor:pointer;letter-spacing:0.1em;
+  }
+
+  @media(min-width:600px){
+    body{padding-bottom:60px}
+    .stage{padding:20px 18px;max-width:700px;margin:0 auto}
+    .question-card{padding:20px}
+    .q-text{font-size:17px}
+    .type-grid{grid-template-columns:repeat(3,1fr)}
+    .type-btn[data-type="0"]{grid-column:span 3}
+  }
+</style>
+</head>
+<body>
+
+<div class="top-fixed">
+  <div class="header">
+    <h1>易错点 <span class="accent">·</span> 识别训练</h1>
+    <div class="sub">三 级 阶 梯 · 五 类 错 型 + 无 错 项</div>
+  </div>
+  <div class="level-row">
+    <button class="level-btn active" data-level="易级">
+      易级<span class="ct" id="easyCount"></span>
+    </button>
+    <button class="level-btn" data-level="中级">
+      中级<span class="ct" id="medCount"></span>
+    </button>
+    <button class="level-btn" data-level="灾级">
+      灾级<span class="ct" id="hardCount"></span>
+    </button>
+    <button class="ref-icon" id="refBtn">📖</button>
+  </div>
+  <div class="progress-row">
+    <div class="progress-num">完成 <span class="hl" id="progressText">0/0</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="score-mini">
+      <span class="ok">✓<span id="correctCount">0</span></span>
+      <span style="color:var(--muted)">/</span>
+      <span class="ng">✗<span id="wrongCount">0</span></span>
+    </div>
+  </div>
+</div>
+
+<main class="stage" id="stage"></main>
+
+<nav class="bottom-nav">
+  <button class="nav-arrow" id="prevBtn" aria-label="上一题">‹</button>
+  <div class="nav-info">
+    第 <span class="cur" id="navCurrent">1</span><span class="div">/</span><span class="total" id="navTotal">0</span> 题
+  </div>
+  <button class="nav-arrow" id="nextBtn" aria-label="下一题">›</button>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+<aside class="ref-panel" id="refPanel">
+  <button class="ref-close" id="refClose">✕</button>
+  <h2>错型对照</h2>
+  <p class="ref-intro">高考选择题的错项设置集中在五种模式上,但也会有"看似有错实则无错"的干扰项。</p>
+
+  <div class="ref-item">
+    <div class="ref-title"><span class="nb">1</span>术语和连词</div>
+    <div class="ref-desc">误用文学术语(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误。</div>
+    <div class="ref-eg"><b>典型:</b>比喻/夸张/象征/伏笔/铺垫/视角 · 不仅…而且 · 之所以…是因为 · 所以</div>
+  </div>
+
+  <div class="ref-item t2">
+    <div class="ref-title"><span class="nb">2</span>过于绝对/否定/反义</div>
+    <div class="ref-desc">使用绝对化、反向、或全称性表达。<b>最常见、最容易发现</b>的错误类型。</div>
+    <div class="ref-eg">
+      <b>绝对化:</b>必然、绝对、一定、完全、总是、所有、唯一、足以<br>
+      <b>反义:</b>无法、绝不、不是、否定、无关、消极/积极对调<br>
+      <b>全称:</b>都、所有
+    </div>
+  </div>
+
+  <div class="ref-item t3">
+    <div class="ref-title"><span class="nb">3</span>动作对象/并列成分</div>
+    <div class="ref-desc">动作主体或对象与原文不符,或并列项中混入不属于该列的内容。</div>
+    <div class="ref-eg"><b>典型:</b>A和B、X、Y、Z(注意每一项是否符合原文)</div>
+  </div>
+
+  <div class="ref-item t4">
+    <div class="ref-title"><span class="nb">4</span>无中生有/偷换概念</div>
+    <div class="ref-desc">原文未提及(无中生有),或用相近但不同的概念替换原文(偷换)。<b>最隐蔽,需精准回文。</b></div>
+    <div class="ref-eg"><b>典型:</b>表明/体现/暗示了…(后接未支持的判断) · 因为…所以…(因果原文并无)</div>
+  </div>
+
+  <div class="ref-item t5">
+    <div class="ref-title"><span class="nb">5</span>过于宽泛/过度概括</div>
+    <div class="ref-desc">把局部、特定的内容扩大为普遍、整体的判断。</div>
+    <div class="ref-eg"><b>典型:</b>侧面反映了…(宏大主题) · 整体上 · 普遍地 · 展现了…的全貌</div>
+  </div>
+
+  <div class="ref-item t0">
+    <div class="ref-title"><span class="nb">0</span>无错(干扰项)</div>
+    <div class="ref-desc">看起来像错的,但每一处都符合原文。考查"不被错觉迷惑"的判断力。</div>
+    <div class="ref-eg"><b>识别:</b>每个关键词都能在原文找到对应 · 没有绝对化/反义/无中生有的痕迹</div>
+  </div>
+</aside>
+
+<script>
+const QUESTION_DATA = {"易级": [{"q": "阴天或下雨时种植花木，浇水量、施肥量总是过多，这些情况必然导致植物的根部腐烂。", "marks": [["这些情况必然", 2, ""]], "mainType": 2, "explain": "本题错处:「这些情况必然」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "问三和问十四均用“依理想而论”对回答者的观点表示完全不解和疑问。", "marks": [["的观点表示完全", 2, ""]], "mainType": 2, "explain": "本题错处:「的观点表示完全」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "玻璃杯中“弯月面”与“凸月面”的现象，表明了当水与其他物质接触时，会产生一种唯一的吸引力。", "marks": [["会产生一种唯一", 2, ""]], "mainType": 2, "explain": "本题错处:「会产生一种唯一」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "一个水分子中的氢原子会受到其邻近水分子中的氧原子的吸引，这可以解释为什么水会排斥水。", "marks": [["为什么水会排斥", 2, "吸引水"]], "mainType": 2, "explain": "本题错处:「为什么水会排斥」 → 应为「吸引水」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "在一个平滑的厨房操作台上倒几滴水，水会自然地形成一些微微凸起的“小水塘”，这体现出水没有张力这一特性。", "marks": [["这体现出水没有", 2, ""]], "mainType": 2, "explain": "本题错处:「这体现出水没有」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "水质相同的情况下，与土质疏松且含有大颗沙砾的泥土相比，在由细小颗粒组成的泥土中，水向上传输的高度会更低。", "marks": [["高度会更低", 2, ""]], "mainType": 2, "explain": "本题错处:「高度会更低」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "“与先前许多伟大的探险一样，我们的旅程起始于厨房”这些语句无法提升读者阅读兴趣的作用。", "marks": [["这些语句无法", 2, ""]], "mainType": 2, "explain": "本题错处:「这些语句无法」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "为了帮助读者更好地理解水会受到物体表面吸引，作者使用了“摩擦过的气球会因静电轻轻地黏附在一起”这一现象进行反例说明。", "marks": [["一现象进行反例", 2, "正例说明"]], "mainType": 2, "explain": "本题错处:「一现象进行反例」 → 应为「正例说明」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "水滴从树叶上落下时，会先拉伸成细长的形状，当太细而无法支撑自身的重量时，它绝不会坠落到地面。这种自然现象表现了水的毛细作用。", "marks": [["它绝不会", 2, ""]], "mainType": 2, "explain": "本题错处:「它绝不会」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "作者在行文时经常变换叙事的地点，从厨房、小河、小溪到大海，这让读者认识到，凭借室内观察到的水的特性足以预测自然界的变化。", "marks": [["特性足以", 2, ""]], "mainType": 2, "explain": "本题错处:「特性足以」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "材料一指出写文章要简练，这与毛泽东《反对党八股》中讽刺有些文章如“懒婆娘的裹脚，又臭又长”的目的一致。", "marks": [["一致", 2, ""]], "mainType": 2, "explain": "本题错处:「一致」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "材料一引用《庄子》的“凫胫虽短，续之则忧；鹤胫虽长，断之则悲”，意在说明语句总是一定要短。", "marks": [["明语句总是一定", 2, ""]], "mainType": 2, "explain": "本题错处:「明语句总是一定」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "材料一谈到文件、讲话和文章要实事求是，不文过饰非，这体现了古人所说的“修辞立其伪”。", "marks": [["修辞立其伪", 2, "诚"]], "mainType": 2, "explain": "本题错处:「修辞立其伪」 → 应为「诚」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "材料二中消极修辞的“四端”，可以表示为明确、通顺、平均、稳密，但并非适用于所有文体。", "marks": [["材料二中消极", 2, "积极"]], "mainType": 2, "explain": "本题错处:「材料二中消极」 → 应为「积极」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "在数字人文的概念提出之前，计算方法已被引入人文领域，在研究中发挥负面作用。", "marks": [["研究中发挥正面", 2, ""]], "mainType": 2, "explain": "本题错处:「研究中发挥正面」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "要实现莫莱蒂设想的世界文学研究，首先应进行大规模的文学文本集合的细读。", "marks": [["先应进行大规模", 2, ""], ["细读", 2, ""]], "mainType": 2, "explain": "本题错处:「先应进行大规模」; 「细读」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "选择远读还是细读的方法，取决于阅读的对象是大规模的文本集合还是所有单篇文本。", "marks": [["本集合还是所有", 2, ""]], "mainType": 2, "explain": "本题错处:「本集合还是所有」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "数字人文不仅为文本处理提供了新的手段和方法，而且为人文研究提供了新视角。", "marks": [["而且", 1, ""]], "mainType": 1, "explain": "本题错处:「而且」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "文章区分“计数”与“理解”，是为了论证计算机能处理某些特定类型的文本。", "marks": [], "mainType": 0, "explain": "本题为「正确选项/干扰项」,没有明显错误。在五类错型中,这种'看起来像是错的实则没错'的题也要会识别——选'无错'即可。"}, {"q": "文章转述数字人文学者米歇尔本人的说法，有助于论证应该忽略重视远读。", "marks": [["于论证应该忽略", 2, ""]], "mainType": 2, "explain": "本题错处:「于论证应该忽略」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "文章第四段讨论单篇文本层面的问题，与前文补充论证无关。", "marks": [["文补充论证无关", 2, ""]], "mainType": 2, "explain": "本题错处:「文补充论证无关」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "文章同时肯定计算机远读和人的细读的作用，有助于增加人们对远读的误解。", "marks": [["误解", 2, "理解"]], "mainType": 2, "explain": "本题错处:「误解」 → 应为「理解」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "人文研究的主体，在数字人文中实现了从具体的学者个人向计算机的完全转变。", "marks": [["完全", 2, "部分转变"]], "mainType": 2, "explain": "本题错处:「完全」 → 应为「部分转变」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "远读不是要深化对文本内容的理解，而是要发掘文本集合的所有共同形式特征。", "marks": [["所有", 2, ""]], "mainType": 2, "explain": "本题错处:「所有」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "数字人文的价值，在于将历史上未被注意和阅读的文本都进行数据化并做全面研究。", "marks": [["文本都", 2, ""], ["做全面", 2, ""]], "mainType": 2, "explain": "本题错处:「文本都」; 「做全面」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "和人的细读相比，远读的理念和做法体现出大数据时代文理分离的跨学科取向。", "marks": [["据时代文理分离", 2, ""]], "mainType": 2, "explain": "本题错处:「据时代文理分离」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "文本一开头写长江向东奔流与难民向西奔逃，炸弹下落与水柱溅起，通过夸张的手法，将“战局吃紧”真切地呈现出来。", "marks": [["夸张", 1, ""]], "mainType": 1, "explain": "本题错处:「夸张」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "文本一写“江水像条怒龙，发狂地在两山之间扭来扭去”，这里的江水象征抗战的艰辛曲折。", "marks": [["江水象征", 1, ""]], "mainType": 1, "explain": "本题错处:「江水象征」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "文本一写乘客们在寒风中打战，转而又写阳光在江面上投下彩虹，这里的阳光和彩虹显然象征着难民们的希望。", "marks": [["和彩虹显然象征", 1, ""]], "mainType": 1, "explain": "本题错处:「和彩虹显然象征」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "文本二是老舍在抗战中的自述，从不愿离开武汉到最终离开武汉，他在思想和认识上发生了彻底的转变。", "marks": [], "mainType": 0, "explain": "本题为「正确选项/干扰项」,没有明显错误。在五类错型中,这种'看起来像是错的实则没错'的题也要会识别——选'无错'即可。"}], "中级": [{"q": "问八的回答“尚有三端”以及问十五的回答“尚有一端”，这些内容可作为问六“必须深耕之理由安在”这一问题的补充和扩展。", "marks": [["扩展", 4, ""]], "mainType": 4, "explain": "本题错处:「扩展」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}, {"q": "问一到问三以及问五到问七讨论的是花木在种植过程中的存活问题，问八到问十五讨论的是花木移植到固定的地方后培育的注意事项。", "marks": [["问八到问十五", 4, ""]], "mainType": 4, "explain": "本题错处:「问八到问十五」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}, {"q": "“如何能使之必然生活”“施用肥料之时期”中“生活”“时期”的含义与今天所有最常使用的意义不相同。", "marks": [["意义不相同", 2, ""]], "mainType": 2, "explain": "本题错处:「意义不相同」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "原文在部分回答结束时使用“是谓……”“是以……”“此为……”收尾，起到了回应提问、否定观点的作用。", "marks": [["否定观点", 2, ""]], "mainType": 2, "explain": "本题错处:「否定观点」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "问六的回答体现了在分析问题和解决问题时要善于抓住重点的思想，而问十二的回答则体现了抽象问题抽象分析的思想。", "marks": [["问六", 4, ""], ["而问十二", 4, ""]], "mainType": 4, "explain": "本题错处:「问六」; 「而问十二」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}, {"q": "“作物之施肥，犹似人之饮食，饮不可过度，食不可过饱，否则作物之生长，似极茂盛，实则易为风雨吹倒”此句可全面且形象地回答问十三。", "marks": [["此句可全面", 2, ""]], "mainType": 2, "explain": "本题错处:「此句可全面」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "牡丹具有喜干怕湿、忌积水的习性，因此其种植地最好选择在干燥向阳、地势不高的地方。", "marks": [["势不高", 2, ""]], "mainType": 2, "explain": "本题错处:「势不高」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "栽植深度不可过深或过浅，过深则容易发生倒伏，过浅则不利于植株的呼吸。", "marks": [["深", 4, ""], ["浅", 4, ""]], "mainType": 4, "explain": "本题错处:「深」; 「浅」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}, {"q": "柳文认为应遵循自然生长规律，让树木依照本性生长，不再管它；本文强调依法种植之后，还应不忽略日常养护。", "marks": [], "mainType": 0, "explain": "本题为「正确选项/干扰项」,没有明显错误。在五类错型中,这种'看起来像是错的实则没错'的题也要会识别——选'无错'即可。"}, {"q": "材料一引用《庄子》的“凫胫虽短，续之则忧；鹤胫虽长，断之则悲”，意在说明语句也不是一定要短，而要长短错落有致。", "marks": [["要长短错落有致", 4, ""]], "mainType": 4, "explain": "本题错处:「要长短错落有致」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}, {"q": "材料一在讨论“短、实、新”三个方面时，均对可能出现的例外情况做了补充说明，体现了思考的随意和片面。", "marks": [["片面", 2, ""]], "mainType": 2, "explain": "本题错处:「片面」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "材料二开篇列举“科学文字、法令文字及其他的诠释文等”，再结合下文表述，可推知消极修辞仅适用于书面表达。", "marks": [["可推知消极修辞", 2, ""], ["仅适用于", 2, ""]], "mainType": 2, "explain": "本题错处:「可推知消极修辞」; 「仅适用于」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "交通极其不便、产业发展路径缺失、开阔平坦的农田数量较少，这些曾经是制约临朐县山区发展现代农业的次要因素。", "marks": [["开阔平坦", 3, ""], ["次要因素", 2, ""]], "mainType": 3, "explain": "本题错处:「开阔平坦」; 「次要因素」。属于「动作对象/并列成分」错误。常见表现:选项中的动作主体或对象与原文不符,或并列项中混入了不属于该列的内容。"}, {"q": "“开门就见山，种田走半天”，这是临朐县山区地形和耕地的特点，安义县江下村“斗笠田”的地形地貌也呈现出这种相同特点。", "marks": [["特点", 4, ""], ["出这种相同特点", 2, ""]], "mainType": 4, "explain": "本题错处:「特点」; 「出这种相同特点」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}, {"q": "大雨天里为牛割草的情形，让“我”意识到自己是一个“悲观”之人，可见放牛生活对“我”思想意识的养成无关重要的意义。", "marks": [["养成无关", 2, ""]], "mainType": 2, "explain": "本题错处:「养成无关」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "文中记述“我”在乱坟岗子里看武侠小说，是有意以环境的阴森怪异来衬托看武侠的乐趣，也凸显出“尘嚣皆忘”的读书境界。", "marks": [["阴森怪异", 2, ""], ["来衬托", 1, ""]], "mainType": 2, "explain": "本题错处:「阴森怪异」; 「来衬托」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "关于文中锯木厂这个段落，看似闲笔，实则以先扬后抑的手法来突出下文“我”的“兴奋又纠结”。", "marks": [["先扬后抑", 1, ""]], "mainType": 1, "explain": "本题错处:「先扬后抑」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "本文不仅记录了作者本人在乌乡小住的感受，还提及不少与当地生活息息相关的话题，如农事收成、动物保护等，侧面反映了乡村的发展。", "marks": [["侧面反映", 5, ""], ["发展", 4, ""]], "mainType": 5, "explain": "本题错处:「侧面反映」; 「发展」。属于「过于宽泛/过度概括」错误。常见表现:把局部、特定的内容扩大为普遍、整体的判断,或把举例当成整体规律。"}, {"q": "霜降夜攀谈中，作者感觉到“一些亮点像阵雨打湿心头，渗入静夜植物的根须”，既实写外在景致的变动，又虚写心中灵感的滋生。", "marks": [["既实写", 1, ""], ["又虚写", 1, ""]], "mainType": 1, "explain": "本题错处:「既实写」; 「又虚写」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "儿子在渡船上会邂逅许多陌生人，父亲教给儿子，如何通过看他们的神情、听他们的言语来判断他们是否心存善意。", "marks": [["们是否心存善意", 4, ""]], "mainType": 4, "explain": "本题错处:「们是否心存善意」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}], "灾级": [{"q": "句子③中的“飘”，是年轻人的一种心理状态，因脱离了父辈压制而感到飘然自在。", "marks": [["而感到飘然自在", 4, ""]], "mainType": 4, "explain": "本题错处:「而感到飘然自在」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}, {"q": "“打加官”第一个就叫保安队队长，可以见出萝卜溪办会者对他有所忌惮和逢迎。", "marks": [], "mainType": 0, "explain": "本题为「正确选项/干扰项」,没有明显错误。在五类错型中,这种'看起来像是错的实则没错'的题也要会识别——选'无错'即可。"}, {"q": "排定戏目外额外点戏需封赏，会长“也被迫点一出”，此细节暗示了会长的吝啬。", "marks": [["吝啬", 4, ""]], "mainType": 4, "explain": "本题错处:「吝啬」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}, {"q": "最后一段景物描写，同鲁迅《社戏》对归家途中的景物描写一样，都以自然之美衬托了散戏后人们的失落与惆怅。", "marks": [["的景物描写一样", 2, ""], ["惆怅", 4, ""]], "mainType": 2, "explain": "本题错处:「的景物描写一样」; 「惆怅」。属于「过于绝对/否定/反义/全称」错误。常见表现:使用必然、绝对、完全、所有、唯一等绝对化词汇,或使用反义词颠倒原意,或不当使用全称代词都/所有等。"}, {"q": "作者认为如果只把“月夜” “花朝” “青山”一类的东西当作写诗的材料，其实是不懂诗，依据是这些材料本身缺乏生命力。", "marks": [["作者认为如果", 1, ""], ["本身缺乏生命力", 4, ""]], "mainType": 1, "explain": "本题错处:「作者认为如果」; 「本身缺乏生命力」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "“我”决定带小岫到橘子林去，只是因为不想“随便放过”偶然到来的晴天，与她提醒“我”履行承诺无关。", "marks": [["只是因为", 1, ""], ["履行承诺无关", 2, ""]], "mainType": 1, "explain": "本题错处:「只是因为」; 「履行承诺无关」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "返回城里的路上，“小岫不说话，我也不说话”，父女二人的沉默表明他们对未到达橘子林感到有点失落。", "marks": [["林感到有点失落", 4, ""]], "mainType": 4, "explain": "本题错处:「林感到有点失落」。属于「无中生有/偷换概念」错误。常见表现:选项所述内容原文未提及(无中生有),或用相近但不同的概念替换原文概念(偷换),最隐蔽,需精准回文比对。"}, {"q": "本文借助小孩子的视角，先后描写了街道、山林、骡车店等处的景象，看似散漫，实则突出主题，使本文具有形散神聚的特点。", "marks": [["视角", 1, ""]], "mainType": 1, "explain": "本题错处:「视角」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "弟弟从上海前往西北的分别之夜，两人并无多言，但信中追忆那个夜如同幼年的夜，写出了“我”在漂泊多年后重拾与弟弟的亲密感情。", "marks": [], "mainType": 0, "explain": "本题为「正确选项/干扰项」,没有明显错误。在五类错型中,这种'看起来像是错的实则没错'的题也要会识别——选'无错'即可。"}, {"q": "猖兵画花脸后显得有地位，而“我”天生的面反而不算什么，这个对比表达了“我”对猖兵的羡慕之意。", "marks": [["这个对比", 1, ""]], "mainType": 1, "explain": "本题错处:「这个对比」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "火柴匣子是日常生活中的事物，文章将猖神庙比作火柴匣子，既强调猖神庙的小，也点出猖神世俗性的一面。", "marks": [], "mainType": 0, "explain": "本题为「正确选项/干扰项」,没有明显错误。在五类错型中,这种'看起来像是错的实则没错'的题也要会识别——选'无错'即可。"}, {"q": "莫须有先生在乡下时要写“放猖”以记民俗，但未写成，后来弥补了这一过失，所以说是“补过的快乐”。", "marks": [["所以", 1, ""]], "mainType": 1, "explain": "本题错处:「所以」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}, {"q": "当地出版的普希金选集虽然收集了他最优秀的作品，但作者并不满足，认为这无助于人们了解完整、复杂、真正的普希金。", "marks": [["普希金选集虽然", 1, ""], ["但", 1, ""], ["这无助于", 2, ""]], "mainType": 1, "explain": "本题错处:「普希金选集虽然」; 「但」; 「这无助于」。属于「术语和连词」错误。常见表现:文学术语误用(把比喻说成夸张/把衬托说成对比/把第三人称说成儿童视角等)、连词关系错误(因果、转折、递进与原文不符)。"}]};
+
+const typeDefs = {
+  0: "✓ 无错(干扰项)",
+  1: "术语/连词",
+  2: "绝对/反义",
+  3: "对象/并列",
+  4: "无中生有",
+  5: "过度概括"
+};
+
+const typeFullNames = {
+  0: "✓ 无错(干扰项)",
+  1: "术语和连词",
+  2: "过于绝对/否定/反义",
+  3: "动作对象/并列成分",
+  4: "无中生有/偷换概念",
+  5: "过于宽泛/过度概括"
+};
+
+const state = {
+  currentLevel:"易级",
+  currentIdx:0,
+  answers:{}
+};
+
+try{
+  const saved = localStorage.getItem('errTrainV5');
+  if(saved){
+    const d = JSON.parse(saved);
+    if(d.answers) state.answers = d.answers;
+    if(d.lastLevel) state.currentLevel = d.lastLevel;
+    if(typeof d.lastIdx === 'number') state.currentIdx = d.lastIdx;
+  }
+}catch(e){}
+
+function saveState(){
+  try{
+    localStorage.setItem('errTrainV5', JSON.stringify({
+      answers:state.answers,
+      lastLevel:state.currentLevel,
+      lastIdx:state.currentIdx
+    }));
+  }catch(e){}
+}
+
+document.getElementById('easyCount').textContent = `${QUESTION_DATA["易级"].length}题`;
+document.getElementById('medCount').textContent = `${QUESTION_DATA["中级"].length}题`;
+document.getElementById('hardCount').textContent = `${QUESTION_DATA["灾级"].length}题`;
+
+const stage = document.getElementById('stage');
+
+function highlightAllAnswers(text, marks){
+  if(!marks || marks.length === 0) return text;
+  const positions = [];
+  marks.forEach(([word, type, correction]) => {
+    let idx = text.indexOf(word);
+    while(idx !== -1){
+      let overlap = false;
+      for(const p of positions){
+        if(idx < p.end && idx + word.length > p.start){
+          overlap = true; break;
+        }
+      }
+      if(!overlap){
+        positions.push({start: idx, end: idx + word.length, word, type});
+        break;
+      }
+      idx = text.indexOf(word, idx + 1);
+    }
+  });
+  positions.sort((a,b) => a.start - b.start);
+  let result = text;
+  for(let i = positions.length - 1; i >= 0; i--){
+    const p = positions[i];
+    result = result.slice(0, p.start) +
+      `<span class="highlight-answer">${p.word}</span>` +
+      result.slice(p.end);
+  }
+  return result;
+}
+
+function buildCorrectionsHTML(marks){
+  if(!marks || marks.length === 0) return '';
+  const items = marks.map(([w, t, c]) => {
+    if(c){
+      return `<div class="correction-item">
+        <span class="corr-wrong">${w}</span>
+        <span class="corr-arrow">→ 应为</span>
+        <span class="corr-right">${c}</span>
+      </div>`;
+    }else{
+      return `<div class="correction-item">
+        <span class="corr-wrong">${w}</span>
+        <span class="corr-no-right">(此处无简单替换,见下方解析)</span>
+      </div>`;
+    }
+  }).join('');
+  return `
+    <div class="corrections show">
+      <div class="corrections-title">⚠ 错处对照 · 应为</div>
+      ${items}
+    </div>
+  `;
+}
+
+function render(){
+  const qs = QUESTION_DATA[state.currentLevel];
+  if(!state.answers[state.currentLevel]) state.answers[state.currentLevel] = {};
+  const levelAnswers = state.answers[state.currentLevel];
+
+  if(state.currentIdx >= qs.length) state.currentIdx = qs.length - 1;
+  if(state.currentIdx < 0) state.currentIdx = 0;
+
+  const i = state.currentIdx;
+  const q = qs[i];
+  const ans = levelAnswers[i];
+  const answered = !!ans;
+  const correct = answered && ans.selected === q.mainType;
+
+  const statusClass = answered ? (correct ? 'correct' : 'wrong') : '';
+  const statusType = correct ? 'ok' : 'ng';
+  const statusText = correct ? '✓ 正确' : '✗ 再想想';
+
+  const textHtml = answered ? highlightAllAnswers(q.q, q.marks) : q.q;
+  const correctionsHtml = answered ? buildCorrectionsHTML(q.marks) : '';
+
+  const types = [0, 1, 2, 3, 4, 5];
+  const btns = types.map(n => {
+    let cls = 'type-btn';
+    if(answered){
+      if(n === q.mainType) cls += ' is-answer';
+      else if(n === ans.selected) cls += ' selected-wrong';
+    }
+    return `
+      <button class="${cls}" data-type="${n}" ${answered ? 'disabled' : ''}>
+        <span class="type-num">${n}</span>${typeDefs[n]}
+      </button>
+    `;
+  }).join('');
+
+  const explainHtml = answered ? `
+    <div class="explanation show">
+      <span class="explanation-label">※ 解 析</span>
+      ${q.explain.replace(/「([^」]+)」/g, '<span class="key">「$1」</span>')}
+    </div>
+  ` : '';
+
+  // 检查是否已完成全部
+  const totalAnswered = Object.keys(levelAnswers).length;
+  const totalCorrect = Object.values(levelAnswers).filter(a => a.correct).length;
+  const showSummary = totalAnswered === qs.length;
+
+  let summaryHtml = '';
+  if(showSummary){
+    const wrongByType = {0:0,1:0,2:0,3:0,4:0,5:0};
+    Object.entries(levelAnswers).forEach(([j, a]) => {
+      if(!a.correct){
+        wrongByType[qs[j].mainType]++;
+      }
+    });
+    const maxWrong = Math.max(...Object.values(wrongByType), 1);
+    summaryHtml = `
+      <div class="summary">
+        <h2>📊 ${state.currentLevel} · 完成结算</h2>
+        <div class="summary-grid">
+          <div class="summary-stat">
+            <div class="stat-value">${Math.round(totalCorrect/qs.length*100)}%</div>
+            <div class="stat-label">正 确 率</div>
+          </div>
+          <div class="summary-stat">
+            <div class="stat-value">${totalCorrect}/${qs.length}</div>
+            <div class="stat-label">答 对/总 数</div>
+          </div>
+        </div>
+        <div class="breakdown">
+          <h3>错题分布</h3>
+          ${[0,1,2,3,4,5].map(n => `
+            <div class="err-row">
+              <div class="l">${n}. ${typeFullNames[n]}</div>
+              <div class="b"><div class="b-fill" style="width:${(wrongByType[n]/maxWrong)*100}%"></div></div>
+              <div class="c">${wrongByType[n]}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="summary-actions">
+          <button class="summary-btn" onclick="resetLevel()">重置本级</button>
+          <button class="summary-btn secondary" onclick="gotoNextLevel()">前往下一级</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // 已答题但未全部完成,显示重置按钮(只显示一次)
+  let resetBottomHtml = '';
+  if(totalAnswered > 0 && !showSummary){
+    resetBottomHtml = `
+      <div class="reset-bottom">
+        <button onclick="resetLevel()">重置本级进度</button>
+      </div>
+    `;
+  }
+
+  stage.innerHTML = `
+    <div class="question-card ${answered ? 'answered' : ''} ${statusClass}">
+      <div class="q-meta">
+        <div class="q-num">第 <span class="num">${String(i+1).padStart(2,'0')}</span> 题 / ${qs.length}</div>
+        <div class="q-status ${statusType}" style="display:${answered ? 'inline-block' : 'none'}">${statusText}</div>
+      </div>
+      <div class="q-text">${textHtml}</div>
+      ${correctionsHtml}
+      <div class="type-grid">${btns}</div>
+      ${explainHtml}
+    </div>
+    ${summaryHtml}
+    ${resetBottomHtml}
+  `;
+
+  // 绑定按钮
+  stage.querySelectorAll('.type-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if(btn.disabled) return;
+      const selected = +btn.dataset.type;
+      const correctType = q.mainType;
+      if(!state.answers[state.currentLevel]) state.answers[state.currentLevel] = {};
+      state.answers[state.currentLevel][i] = {
+        selected,
+        correct: selected === correctType
+      };
+      saveState();
+      render();
+      // 答对自动 0.8 秒后跳下一题(可选)
+      // 不要自动跳,让学生看完解析
+    });
+  });
+
+  updateNav();
+}
+
+function updateNav(){
+  const qs = QUESTION_DATA[state.currentLevel];
+  const levelAnswers = state.answers[state.currentLevel] || {};
+  const answered = Object.keys(levelAnswers).length;
+  const correct = Object.values(levelAnswers).filter(a => a.correct).length;
+  const wrong = answered - correct;
+
+  document.getElementById('progressText').textContent = `${answered}/${qs.length}`;
+  document.getElementById('progressFill').style.width = `${(answered / qs.length) * 100}%`;
+  document.getElementById('correctCount').textContent = correct;
+  document.getElementById('wrongCount').textContent = wrong;
+  document.getElementById('navCurrent').textContent = state.currentIdx + 1;
+  document.getElementById('navTotal').textContent = qs.length;
+  document.getElementById('prevBtn').disabled = state.currentIdx <= 0;
+  document.getElementById('nextBtn').disabled = state.currentIdx >= qs.length - 1;
+}
+
+function goPrev(){
+  if(state.currentIdx > 0){
+    state.currentIdx--;
+    saveState();
+    render();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+function goNext(){
+  const qs = QUESTION_DATA[state.currentLevel];
+  if(state.currentIdx < qs.length - 1){
+    state.currentIdx++;
+    saveState();
+    render();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+function resetLevel(){
+  if(!confirm(`确定要重置"${state.currentLevel}"的全部答题记录吗?`)) return;
+  state.answers[state.currentLevel] = {};
+  state.currentIdx = 0;
+  saveState();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function gotoNextLevel(){
+  const levels = ["易级","中级","灾级"];
+  const idx = levels.indexOf(state.currentLevel);
+  if(idx < levels.length - 1){
+    state.currentLevel = levels[idx+1];
+    state.currentIdx = 0;
+    document.querySelectorAll('.level-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.level === state.currentLevel);
+    });
+    saveState();
+    render();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }else{
+    alert('你已完成所有级别训练!强烈建议明天再复习一遍错题。');
+  }
+}
+
+document.querySelectorAll('.level-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.currentLevel = btn.dataset.level;
+    state.currentIdx = 0;
+    saveState();
+    render();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// 初始化时根据保存的 currentLevel 设置 active
+document.querySelectorAll('.level-btn').forEach(b => {
+  b.classList.toggle('active', b.dataset.level === state.currentLevel);
+});
+
+document.getElementById('prevBtn').addEventListener('click', goPrev);
+document.getElementById('nextBtn').addEventListener('click', goNext);
+
+const refPanel = document.getElementById('refPanel');
+const overlay = document.getElementById('overlay');
+document.getElementById('refBtn').addEventListener('click', () => {
+  refPanel.classList.add('open'); overlay.classList.add('open');
+});
+function closeRef(){
+  refPanel.classList.remove('open'); overlay.classList.remove('open');
+}
+document.getElementById('refClose').addEventListener('click', closeRef);
+overlay.addEventListener('click', closeRef);
+
+// 左右滑动切换题目
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', (e) => {
+  if(refPanel.classList.contains('open')) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if(Math.abs(dx) > 80 && Math.abs(dx) > Math.abs(dy) * 1.5){
+    if(dx > 0) goPrev(); else goNext();
+  }
+});
+
+// 键盘
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowLeft') goPrev();
+  else if(e.key === 'ArrowRight') goNext();
+});
+
+render();
+</script>
+</body>
+</html>
