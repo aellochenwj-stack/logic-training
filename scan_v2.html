@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1612">
+<title>位置扫雷 · 全句翻译 · 文言文综合训练</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --ink-soft: #3a3328;
+    --paper: #f4ede0;
+    --paper-light: #faf6ec;
+    --paper-dark: #ebe2cf;
+    --vermillion: #c8431f;
+    --vermillion-deep: #9c2f15;
+    --gold: #b8893a;
+    --jade: #4a6b56;
+    --indigo: #3d5a7a;
+    --slate: #6b6157;
+    --line: #d4c8b3;
+    --line-soft: #e6dcc7;
+
+    --c-huoyong: #c8431f;
+    --c-yiyi: #4a6b56;
+    --c-jushi: #3d5a7a;
+    --c-tongjia: #b8893a;
+
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Noto Serif SC', 'Songti SC', serif;
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+  body {
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 10% 5%, rgba(184, 137, 58, 0.06), transparent 50%),
+      radial-gradient(ellipse at 90% 95%, rgba(200, 67, 31, 0.04), transparent 50%);
+  }
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding-top: var(--safe-top);
+    padding-bottom: calc(var(--safe-bottom) + 20px);
+    position: relative;
+  }
+
+  /* TOP BAR */
+  .top-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(244, 237, 224, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .brand {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 12px 18px 8px;
+  }
+  .brand-cn { font-size: 17px; font-weight: 700; letter-spacing: 3px; }
+  .brand-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 11px;
+    color: var(--vermillion); letter-spacing: 1px;
+  }
+  .brand-seal {
+    margin-left: auto;
+    width: 26px; height: 26px;
+    background: var(--vermillion); color: var(--paper);
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: -1px; border-radius: 3px;
+    transform: rotate(-3deg);
+  }
+
+  .top-tabs {
+    display: flex;
+    padding: 0 8px;
+    gap: 0;
+    border-top: 1px solid var(--line-soft);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .top-tabs::-webkit-scrollbar { display: none; }
+  .tab-item {
+    flex: 1; min-width: 0;
+    background: transparent; border: none;
+    color: var(--slate); font-family: inherit;
+    cursor: pointer;
+    padding: 10px 4px 12px;
+    font-size: 12px; letter-spacing: 1px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+  .tab-item .tab-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    font-size: 13px; color: var(--vermillion);
+    opacity: 0.5;
+  }
+  .tab-item.active { color: var(--ink); font-weight: 700; }
+  .tab-item.active .tab-num { opacity: 1; }
+  .tab-item.active::after {
+    content: ''; position: absolute;
+    left: 25%; right: 25%; bottom: 0;
+    height: 2px; background: var(--vermillion);
+    border-radius: 1px;
+  }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .hero {
+    padding: 24px 22px 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .hero-title {
+    font-weight: 900; font-size: 26px;
+    letter-spacing: 5px; line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 12px;
+    color: var(--vermillion); letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .hero-tagline {
+    font-size: 12px; color: var(--slate);
+    line-height: 1.6;
+    max-width: 300px; margin: 0 auto;
+  }
+
+  /* method strip */
+  .method-strip {
+    display: flex; justify-content: space-around;
+    padding: 14px 12px;
+    background: var(--paper-light);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .method-step { text-align: center; flex: 1; position: relative; }
+  .method-step:not(:last-child)::after {
+    content: ''; position: absolute;
+    right: -1px; top: 8px; bottom: 8px;
+    width: 1px; background: var(--line-soft);
+  }
+  .method-step .num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 18px;
+    font-weight: 700; color: var(--vermillion);
+    line-height: 1; margin-bottom: 4px;
+  }
+  .method-step .label { font-size: 11px; letter-spacing: 1px; }
+
+  /* SECTION */
+  .level-section { padding: 20px 18px 8px; }
+  .section-title {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .section-title h2 {
+    font-size: 17px; font-weight: 700; letter-spacing: 2px;
+  }
+  .section-title .en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 11px;
+    color: var(--slate);
+  }
+
+  /* LEVEL CARDS */
+  .level-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .level-card {
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 14px;
+    cursor: pointer;
+    position: relative; overflow: hidden;
+    transition: transform 0.15s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .level-card:active { transform: scale(0.98); }
+  .level-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 4px; background: var(--accent);
+  }
+  .level-card[data-lv="1"] { --accent: var(--jade); }
+  .level-card[data-lv="2"] { --accent: var(--gold); }
+  .level-card[data-lv="3"] { --accent: var(--vermillion); }
+  .level-card[data-cat="huoyong"] { --accent: var(--c-huoyong); }
+  .level-card[data-cat="yiyi"] { --accent: var(--c-yiyi); }
+  .level-card[data-cat="jushi"] { --accent: var(--c-jushi); }
+  .level-card[data-cat="tongjia"] { --accent: var(--c-tongjia); }
+  .level-card[data-cat="zhenti"] { --accent: var(--vermillion); }
+  .level-card .lv-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    font-size: 28px; color: var(--accent);
+    line-height: 1; width: 36px;
+    flex-shrink: 0;
+  }
+  .level-card .lv-info { flex: 1; min-width: 0; }
+  .level-card .lv-title {
+    font-size: 16px; font-weight: 700;
+    letter-spacing: 1.5px; margin-bottom: 2px;
+  }
+  .level-card .lv-desc {
+    font-size: 11px; color: var(--slate);
+    line-height: 1.5; margin-bottom: 5px;
+  }
+  .level-card .lv-meta {
+    font-size: 10px; color: var(--slate);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .level-card .lv-meta .dot {
+    width: 5px; height: 5px;
+    background: var(--accent); border-radius: 50%;
+  }
+  .level-card .lv-progress {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    color: var(--accent); font-size: 13px;
+  }
+
+  /* SUB-TAB INSIDE QUANJU */
+  .sub-tabs {
+    display: flex; gap: 6px;
+    padding: 12px 18px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .sub-tab {
+    flex: 1;
+    background: transparent;
+    border: none; border-bottom: 2px solid transparent;
+    color: var(--slate);
+    font-family: inherit; font-size: 13px;
+    font-weight: 500; letter-spacing: 1px;
+    cursor: pointer;
+    padding: 8px 10px 10px;
+    transition: all 0.2s;
+  }
+  .sub-tab.active {
+    color: var(--ink); font-weight: 700;
+    border-bottom-color: var(--vermillion);
+  }
+
+  /* DRILL */
+  .drill-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    background: var(--paper-light);
+    border-bottom: 1px solid var(--line-soft);
+    position: sticky; top: 0; z-index: 40;
+  }
+  .back-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink); font-family: inherit;
+    font-size: 12px; padding: 5px 11px;
+    border-radius: 14px; cursor: pointer;
+  }
+  .back-btn:active { background: var(--paper-dark); }
+  .drill-title { flex: 1; min-width: 0; }
+  .drill-title .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 10px;
+    color: var(--vermillion); letter-spacing: 1px;
+  }
+  .drill-title h2 {
+    margin-top: 1px; font-size: 14px;
+    font-weight: 700; letter-spacing: 1px;
+    white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .drill-progress {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    font-size: 13px; color: var(--vermillion);
+    flex-shrink: 0;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .drill-progress:active { background: var(--paper-dark); }
+
+  /* QUESTION JUMPER */
+  .jumper-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26, 22, 18, 0.5);
+    z-index: 100;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .jumper-overlay.show { display: flex; }
+  .jumper-panel {
+    background: var(--paper);
+    width: 100%;
+    max-width: 480px;
+    max-height: 70vh;
+    border-radius: 16px 16px 0 0;
+    padding: 16px 16px calc(20px + var(--safe-bottom));
+    overflow-y: auto;
+  }
+  .jumper-title {
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 1px; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .jumper-title .close-x {
+    background: transparent; border: none;
+    color: var(--slate); font-size: 20px;
+    cursor: pointer; padding: 0 4px;
+  }
+  .jumper-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .jumper-cell {
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    background: var(--paper-light);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .jumper-cell:active { transform: scale(0.94); }
+  .jumper-cell.done {
+    background: var(--jade);
+    color: var(--paper);
+    border-color: var(--jade);
+  }
+  .jumper-cell.current {
+    background: var(--vermillion);
+    color: var(--paper);
+    border-color: var(--vermillion);
+  }
+
+  /* STEP BAR */
+  .step-bar {
+    display: flex; padding: 12px 16px 4px; gap: 5px;
+  }
+  .step-pill {
+    flex: 1; text-align: center;
+    padding: 7px 4px; border-radius: 6px;
+    font-size: 11px; font-weight: 500;
+    color: var(--slate);
+    background: var(--paper-light);
+    border: 1px solid var(--line-soft);
+    display: flex; align-items: center;
+    justify-content: center; gap: 4px;
+    transition: all 0.2s;
+  }
+  .step-pill .num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    font-size: 12px;
+  }
+  .step-pill.active {
+    background: var(--ink); color: var(--paper);
+    border-color: var(--ink);
+  }
+  .step-pill.done {
+    background: var(--jade); color: var(--paper);
+    border-color: var(--jade);
+  }
+
+  .drill-body { padding: 12px 16px; }
+
+  /* CONTEXT */
+  .ctx-strip {
+    background: var(--paper-light);
+    border-left: 3px solid var(--gold);
+    padding: 7px 11px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: var(--slate);
+    line-height: 1.5;
+  }
+  .ctx-strip .ctx-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    color: var(--gold);
+    margin-right: 6px; letter-spacing: 1px;
+  }
+
+  /* SENTENCE CARD */
+  .sentence-card {
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 12px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .sentence-card::before {
+    content: 'SCAN';
+    position: absolute; top: -7px; left: 14px;
+    background: var(--paper);
+    padding: 0 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 10px;
+    color: var(--slate); letter-spacing: 2px;
+  }
+  .sentence-card .src-tag {
+    position: absolute; top: -7px; right: 14px;
+    background: var(--paper); padding: 0 6px;
+    font-size: 10px; color: var(--slate); letter-spacing: 1px;
+  }
+  .sentence-cn {
+    font-size: 20px; line-height: 2;
+    letter-spacing: 1px; word-break: break-word;
+    text-align: center; padding: 6px 0;
+  }
+  .ch {
+    display: inline-block;
+    padding: 2px 3px; margin: 0 1px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.12s;
+    user-select: none; -webkit-user-select: none;
+    border: 1.5px solid transparent;
+  }
+  .ch.punct { cursor: default; color: var(--slate); padding: 2px 0; }
+  .ch.suspect {
+    background: rgba(200, 67, 31, 0.12);
+    border-color: var(--vermillion);
+    color: var(--vermillion-deep);
+    font-weight: 700;
+  }
+  .ch.correct {
+    background: var(--jade); color: var(--paper);
+    border-color: var(--jade);
+  }
+  .ch.missed {
+    background: rgba(184, 137, 58, 0.18);
+    border-color: var(--gold);
+    border-style: dashed;
+    color: var(--gold);
+  }
+  .ch.wrong-pick {
+    background: rgba(120, 120, 120, 0.15);
+    border-color: var(--slate);
+    color: var(--slate);
+    text-decoration: line-through;
+  }
+
+  .hint {
+    font-size: 11px; color: var(--slate);
+    text-align: center;
+    margin: 6px 0 12px;
+    font-style: italic;
+  }
+
+  /* PICK SUMMARY */
+  .pick-summary {
+    background: var(--paper-light);
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 12px; color: var(--slate);
+    text-align: center;
+    min-height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    flex-wrap: wrap; gap: 6px;
+  }
+  .pick-summary .empty {
+    font-style: italic; color: var(--line);
+  }
+  .pick-tag {
+    background: var(--vermillion); color: var(--paper);
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+  }
+  .pick-tag::after { content: ' ✕'; opacity: 0.7; font-size: 10px; }
+
+  /* SIGNAL PICKER */
+  .panel-title {
+    font-size: 13px;
+    color: var(--slate); letter-spacing: 1px;
+    margin-bottom: 10px;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .panel-title .num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    color: var(--vermillion); font-size: 14px;
+  }
+  .panel-title .word-pin {
+    color: var(--vermillion); font-weight: 700;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px; margin-left: auto;
+  }
+
+  .signal-list {
+    display: flex; flex-direction: column;
+    gap: 7px; margin-bottom: 14px;
+  }
+  .signal-card {
+    background: var(--paper-light);
+    border: 1.5px solid var(--line-soft);
+    border-radius: 9px;
+    padding: 9px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .signal-card:active { transform: scale(0.99); }
+  .signal-card.selected {
+    background: var(--ink); color: var(--paper);
+    border-color: var(--ink);
+  }
+  .signal-card.selected .sig-name { color: var(--paper); }
+  .signal-card.selected .sig-desc { color: rgba(255,255,255,0.85); }
+  .signal-card.selected .sig-hint { color: var(--gold); }
+  .sig-name {
+    font-size: 12px; font-weight: 700;
+    color: var(--ink); margin-bottom: 2px;
+    letter-spacing: 1px;
+  }
+  .sig-desc {
+    font-size: 11px; color: var(--slate); line-height: 1.5;
+  }
+  .sig-hint {
+    font-size: 10px; color: var(--vermillion);
+    margin-top: 3px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; letter-spacing: 0.5px;
+  }
+
+  /* RESULT CARD */
+  .result-card {
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .result-card .row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0;
+    font-size: 12px;
+    border-bottom: 1px dashed var(--line-soft);
+  }
+  .result-card .row:last-child { border-bottom: none; }
+  .result-card .row .k { color: var(--slate); flex-shrink: 0; }
+  .result-card .row .v {
+    text-align: right; color: var(--ink);
+    font-weight: 500; max-width: 60%;
+  }
+  .result-card .row .v.modern { color: var(--slate); text-decoration: line-through; }
+  .result-card .row .v.classical { color: var(--vermillion-deep); font-weight: 700; }
+  .result-card .why {
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line-soft);
+    font-size: 12px; color: var(--ink-soft);
+    line-height: 1.7;
+  }
+  .result-card .why::before {
+    content: '∴'; color: var(--vermillion);
+    font-weight: 700; margin-right: 6px;
+    font-size: 15px; vertical-align: middle;
+  }
+
+  .spot-section { margin-bottom: 14px; }
+  .spot-section .spot-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    color: var(--vermillion);
+    font-size: 12px; letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+
+  /* SCORE BANNER */
+  .score-banner {
+    background: var(--ink); color: var(--paper);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .score-banner .score {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    font-size: 28px; color: var(--vermillion);
+    line-height: 1;
+  }
+  .score-banner .score-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 3px; letter-spacing: 2px;
+  }
+  .score-banner .breakdown {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    display: flex; justify-content: space-around;
+    font-size: 11px;
+  }
+  .score-banner .breakdown .b-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 2px;
+  }
+  .score-banner .breakdown .b-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    font-size: 17px;
+  }
+  .score-banner .breakdown .b-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.6); letter-spacing: 1px;
+  }
+
+  /* TRANSLATION INPUT */
+  .trans-input-card {
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .trans-input-card .ti-label {
+    font-size: 11px; color: var(--slate);
+    letter-spacing: 1px; margin-bottom: 6px;
+  }
+  textarea.translation {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px;
+    line-height: 1.7;
+    resize: vertical;
+    color: var(--ink);
+  }
+  textarea.translation:focus {
+    outline: none; border-color: var(--vermillion);
+  }
+  .trans-tip {
+    font-size: 10px; color: var(--slate);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* STD TRANSLATION */
+  .std-trans-card {
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--jade);
+  }
+  .std-trans-card .stl {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    color: var(--jade); font-size: 11px;
+    letter-spacing: 1px; margin-bottom: 5px;
+  }
+  .std-trans-card .stt {
+    font-size: 14px; line-height: 1.8;
+    color: var(--ink);
+  }
+
+  .your-trans-card {
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--slate);
+  }
+  .your-trans-card .stl {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    color: var(--slate); font-size: 11px;
+    letter-spacing: 1px; margin-bottom: 5px;
+  }
+
+  /* ACTION BAR */
+  .action-bar {
+    padding: 12px 16px 20px;
+    display: flex; gap: 10px;
+  }
+  .btn {
+    flex: 1;
+    background: var(--ink); color: var(--paper);
+    border: 1px solid var(--ink);
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(0.97);
+    background: var(--ink-soft);
+  }
+  .btn.ghost {
+    background: transparent; color: var(--ink);
+  }
+  .btn.ghost:active { background: var(--paper-dark); }
+  .btn.primary {
+    background: var(--vermillion); border-color: var(--vermillion);
+  }
+  .btn.primary:active { background: var(--vermillion-deep); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* SIGNAL REF */
+  .sig-ref-section { padding: 16px; }
+  .sig-ref-group { margin-bottom: 18px; }
+  .sig-ref-group h3 {
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .sig-ref-group h3 .ch-tag {
+    display: inline-block;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    margin-right: 7px; vertical-align: middle;
+  }
+  .sig-ref-group[data-t=huoyong] h3 .ch-tag { background: var(--c-huoyong); }
+  .sig-ref-group[data-t=yiyi] h3 .ch-tag { background: var(--c-yiyi); }
+  .sig-ref-group[data-t=jushi] h3 .ch-tag { background: var(--c-jushi); }
+  .sig-ref-group[data-t=tongjia] h3 .ch-tag { background: var(--c-tongjia); }
+  .sig-ref-card {
+    background: var(--paper-light);
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin-bottom: 7px;
+    border-left: 3px solid var(--accent);
+  }
+  .sig-ref-card[data-t=huoyong] { --accent: var(--c-huoyong); }
+  .sig-ref-card[data-t=yiyi] { --accent: var(--c-yiyi); }
+  .sig-ref-card[data-t=jushi] { --accent: var(--c-jushi); }
+  .sig-ref-card[data-t=tongjia] { --accent: var(--c-tongjia); }
+  .sig-ref-card .sr-name {
+    font-weight: 700; font-size: 12px;
+    margin-bottom: 3px;
+  }
+  .sig-ref-card .sr-desc {
+    font-size: 11px; color: var(--slate); line-height: 1.6;
+  }
+  .sig-ref-card .sr-hint {
+    font-size: 10px; color: var(--vermillion);
+    margin-top: 3px; font-style: italic;
+  }
+
+  /* STATS */
+  .stats-section { padding: 16px; }
+  .stats-card {
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .stats-card h3 {
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .blind-list { display: flex; flex-direction: column; gap: 6px; }
+  .blind-item {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 7px 11px;
+    background: var(--paper);
+    border-left: 3px solid var(--vermillion);
+    border-radius: 4px;
+    font-size: 11px;
+  }
+  .blind-item .b-sig { font-weight: 700; }
+  .blind-item .b-rate {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 700;
+    color: var(--vermillion);
+  }
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--slate); font-size: 13px;
+  }
+  .empty-state .icon { font-size: 30px; margin-bottom: 8px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 80px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: var(--paper);
+    padding: 9px 16px;
+    border-radius: 18px;
+    font-size: 12px;
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+    z-index: 200;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-cn">位置扫雷</span>
+      <span class="brand-en">SCAN · LOCATE · DECODE</span>
+      <span class="brand-seal">扫</span>
+    </div>
+    <nav class="top-tabs">
+      <button class="tab-item active" data-page="home"><span class="tab-num">01</span>扫雷</button>
+      <button class="tab-item" data-page="quanju"><span class="tab-num">02</span>全句翻译</button>
+      <button class="tab-item" data-page="signals"><span class="tab-num">03</span>信号表</button>
+      <button class="tab-item" data-page="stats"><span class="tab-num">04</span>盲区</button>
+    </nav>
+  </header>
+
+  <!-- HOME (位置扫雷) -->
+  <section id="page-home" class="page active">
+    <div class="hero">
+      <h1 class="hero-title">扫题三步</h1>
+      <div class="hero-sub">POSITION-BASED SCAN</div>
+      <p class="hero-tagline">不靠语感,靠位置。<br>名词站错位置=活用,熟字读不通=异义。</p>
+    </div>
+    <div class="method-strip">
+      <div class="method-step"><div class="num">①</div><div class="label">圈出可疑词</div></div>
+      <div class="method-step"><div class="num">②</div><div class="label">指认位置信号</div></div>
+      <div class="method-step"><div class="num">③</div><div class="label">代入验证</div></div>
+    </div>
+    <div class="level-section">
+      <div class="section-title">
+        <h2>难度训练</h2>
+        <span class="en">DRILLS BY LEVEL</span>
+      </div>
+      <div class="level-grid">
+        <div class="level-card" data-lv="1" onclick="startScan(1)">
+          <div class="lv-num">I</div>
+          <div class="lv-info">
+            <div class="lv-title">易级</div>
+            <div class="lv-desc">每句一个清晰踩分点,信号明确,适合入门</div>
+            <div class="lv-meta"><span class="dot"></span><span id="scan-1-count">10 题</span><span>·</span><span id="scan-1-progress">未开始</span></div>
+          </div>
+          <div class="lv-progress" id="scan-1-pct">→</div>
+        </div>
+        <div class="level-card" data-lv="2" onclick="startScan(2)">
+          <div class="lv-num">II</div>
+          <div class="lv-info">
+            <div class="lv-title">中级</div>
+            <div class="lv-desc">每句2-3个踩分点,需先切分句子成分再判断</div>
+            <div class="lv-meta"><span class="dot"></span><span id="scan-2-count">10 题</span><span>·</span><span id="scan-2-progress">未开始</span></div>
+          </div>
+          <div class="lv-progress" id="scan-2-pct">→</div>
+        </div>
+        <div class="level-card" data-lv="3" onclick="startScan(3)">
+          <div class="lv-num">III</div>
+          <div class="lv-info">
+            <div class="lv-title">难级</div>
+            <div class="lv-desc">混合多类信号,含通假干扰,模拟真题密度</div>
+            <div class="lv-meta"><span class="dot"></span><span id="scan-3-count">10 题</span><span>·</span><span id="scan-3-progress">未开始</span></div>
+          </div>
+          <div class="lv-progress" id="scan-3-pct">→</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 全句翻译 -->
+  <section id="page-quanju" class="page">
+    <div class="hero">
+      <h1 class="hero-title" style="font-size: 24px; letter-spacing: 4px;">全句翻译</h1>
+      <div class="hero-sub">FULL SENTENCE PRACTICE</div>
+      <p class="hero-tagline" style="font-size:12px;">从教材常考点到近五年真题,完整训练扫题+翻译</p>
+    </div>
+
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-subtab="basic">基础训练</button>
+      <button class="sub-tab" data-subtab="zhenti">真题试炼</button>
+    </div>
+
+    <!-- 基础训练 -->
+    <div id="subpage-basic" class="subpage active" style="display:block;">
+      <div class="level-section">
+        <div class="section-title">
+          <h2>四类专项</h2>
+          <span class="en">BY CATEGORY</span>
+        </div>
+        <div class="level-grid">
+          <div class="level-card" data-cat="huoyong" onclick="startBasic('huoyong')">
+            <div class="lv-num">活</div>
+            <div class="lv-info">
+              <div class="lv-title">词类活用</div>
+              <div class="lv-desc">名作动/状,形作动/名,使动,意动</div>
+              <div class="lv-meta"><span class="dot"></span><span id="basic-huoyong-count">- 题</span><span>·</span><span id="basic-huoyong-progress">未开始</span></div>
+            </div>
+            <div class="lv-progress" id="basic-huoyong-pct">→</div>
+          </div>
+          <div class="level-card" data-cat="yiyi" onclick="startBasic('yiyi')">
+            <div class="lv-num">异</div>
+            <div class="lv-info">
+              <div class="lv-title">古今异义</div>
+              <div class="lv-desc">熟字读不通,双音节词需拆字</div>
+              <div class="lv-meta"><span class="dot"></span><span id="basic-yiyi-count">- 题</span><span>·</span><span id="basic-yiyi-progress">未开始</span></div>
+            </div>
+            <div class="lv-progress" id="basic-yiyi-pct">→</div>
+          </div>
+          <div class="level-card" data-cat="jushi" onclick="startBasic('jushi')">
+            <div class="lv-num">句</div>
+            <div class="lv-info">
+              <div class="lv-title">特殊句式</div>
+              <div class="lv-desc">判断/被动/倒装/省略/固定句式</div>
+              <div class="lv-meta"><span class="dot"></span><span id="basic-jushi-count">- 题</span><span>·</span><span id="basic-jushi-progress">未开始</span></div>
+            </div>
+            <div class="lv-progress" id="basic-jushi-pct">→</div>
+          </div>
+          <div class="level-card" data-cat="tongjia" onclick="startBasic('tongjia')">
+            <div class="lv-num">通</div>
+            <div class="lv-info">
+              <div class="lv-title">通假</div>
+              <div class="lv-desc">字读不通,按音找本字</div>
+              <div class="lv-meta"><span class="dot"></span><span id="basic-tongjia-count">- 题</span><span>·</span><span id="basic-tongjia-progress">未开始</span></div>
+            </div>
+            <div class="lv-progress" id="basic-tongjia-pct">→</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 真题试炼 -->
+    <div id="subpage-zhenti" class="subpage" style="display:none;">
+      <div class="level-section">
+        <div class="section-title">
+          <h2>近五年真题</h2>
+          <span class="en">2021–2025</span>
+        </div>
+        <div class="level-grid" id="zhenti-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DRILL -->
+  <section id="page-drill" class="page">
+    <div class="drill-header">
+      <button class="back-btn" onclick="exitDrill()">← 返回</button>
+      <div class="drill-title">
+        <div class="label" id="drill-src">2024·新高考I</div>
+        <h2 id="drill-title-h2">易级训练</h2>
+      </div>
+      <div class="drill-progress" id="drill-progress" onclick="openJumper()">1 / 10</div>
+    </div>
+    <div class="step-bar" id="step-bar"></div>
+    <div class="drill-body" id="drill-body"></div>
+    <div class="action-bar" id="drill-actions"></div>
+  </section>
+
+  <!-- SIGNAL REF -->
+  <section id="page-signals" class="page">
+    <div class="hero">
+      <h1 class="hero-title" style="font-size: 22px; letter-spacing: 4px;">位置信号表</h1>
+      <div class="hero-sub">POSITION SIGNAL REFERENCE</div>
+      <p class="hero-tagline" style="font-size:12px;">扫题时盯住这些位置,踩分点几乎不会漏</p>
+    </div>
+    <div class="sig-ref-section" id="sig-ref-content"></div>
+  </section>
+
+  <!-- STATS -->
+  <section id="page-stats" class="page">
+    <div class="hero">
+      <h1 class="hero-title" style="font-size: 22px; letter-spacing: 4px;">你的盲区</h1>
+      <div class="hero-sub">YOUR BLIND SPOTS</div>
+      <p class="hero-tagline" style="font-size:12px;">最容易漏的位置信号,集中突破</p>
+    </div>
+    <div class="stats-section" id="stats-content"></div>
+  </section>
+
+</div>
+
+<!-- QUESTION JUMPER OVERLAY -->
+<div class="jumper-overlay" id="jumper">
+  <div class="jumper-panel">
+    <div class="jumper-title">
+      <span>跳转题号</span>
+      <button class="close-x" onclick="closeJumper()">✕</button>
+    </div>
+    <div class="jumper-grid" id="jumper-grid"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+const DATA = {"SCAN":[{"id":1,"level":1,"src":"2024·新高考I","context":"李陵率五千步兵深入匈奴","tokens":["愿","以","少","击","众"],"spots":[{"tok_idx":2,"word":"少","signal":"B2","signal_desc":"形容词处于介词'以'后的宾语位置","type":"huoyong","subtype":"形作名","modern":"年少 / 数量少","classical":"少量的兵力","why":"介词'以'后必须接名词性成分。'少'本是形容词,这里活用为名词,指代'少量兵力'。"},{"tok_idx":4,"word":"众","signal":"B2","signal_desc":"形容词处于动词'击'后的宾语位置","type":"huoyong","subtype":"形作名","modern":"众多","classical":"众多的敌人","why":"动词'击'后接宾语。'众'活用为名词,指'多数兵力'。"}]},{"id":2,"level":1,"src":"2024·新高考II","context":"汉高祖见到四位老人","tokens":["上","怪","之"],"spots":[{"tok_idx":1,"word":"怪","signal":"C2","signal_desc":"形容词后直接跟代词宾语'之'","type":"huoyong","subtype":"意动","modern":"奇怪(形)","classical":"认为...奇怪","why":"形容词不能直接带宾语。'怪'后跟代词'之',这是意动用法的典型信号——'认为之奇怪'。"}]},{"id":3,"level":1,"src":"2022·新高考I","context":"燕王推托救魏","tokens":["秦","必","去","矣"],"spots":[{"tok_idx":2,"word":"去","signal":"D2","signal_desc":"单字词,代入现代义'前往'语境讲不通","type":"yiyi","subtype":"古今异义","modern":"前往","classical":"离开","why":"现代'去'是'前往',代入这里:'秦必前往矣'说不通。文言'去'恰好相反——离开。"}]},{"id":4,"level":1,"src":"2024·新高考I","context":"李陵全家被诛","tokens":["陵","母弟","妻子","皆","诛"],"spots":[{"tok_idx":2,"word":"妻子","signal":"D1","signal_desc":"双字词,与'母弟'并列,代入'老婆'后逻辑不全","type":"yiyi","subtype":"古今异义(双字)","modern":"老婆","classical":"妻子和儿女","why":"扫到'妻子'警觉:这是'妻+子'两个独立的字,与'母弟'并列。译为'老婆'就漏了'子女'。"}]},{"id":5,"level":1,"src":"2021·新高考I","context":"皇上担忧官吏受贿","tokens":["上","患","吏","多","受","赇"],"spots":[{"tok_idx":1,"word":"患","signal":"D2","signal_desc":"单字词,代入'患病'讲不通","type":"yiyi","subtype":"古今异义","modern":"患病 / 病患","classical":"担忧","why":"'皇上患病官吏受贿'根本不通。'患'在文言中是动词'担忧'。"}]},{"id":6,"level":1,"src":"2022·全国乙","context":"形容部队遇敌时的状态","tokens":["望见","敌","而","内","骇"],"spots":[{"tok_idx":3,"word":"内","signal":"A2","signal_desc":"名词在动词'骇'前,且不是主语","type":"huoyong","subtype":"名作状","modern":"内部(名)","classical":"在内心","why":"'内'是方位名词,出现在动词'骇'前。这里不是主语,所以是名词作状语,意为'在内心'。"}]},{"id":7,"level":1,"src":"2021·全国甲","context":"为老人雇人代役","tokens":["愍","其","老"],"spots":[{"tok_idx":2,"word":"老","signal":"B2","signal_desc":"形容词前有定语'其',处于动词宾语位置","type":"huoyong","subtype":"形作名","modern":"老(形)","classical":"年老 / 老人","why":"'愍'是动词,后接宾语。'其老'中'老'前有定语'其',构成名词性短语,活用为名词。"}]},{"id":8,"level":1,"src":"2021·全国甲","context":"捕一只蟋蟀就要倾家荡产","tokens":["每","责","一头"],"spots":[{"tok_idx":1,"word":"责","signal":"D2","signal_desc":"单字词,代入'责备'与语境(进贡蟋蟀)不符","type":"yiyi","subtype":"古今异义","modern":"责备","classical":"索取 / 索要","why":"语境是上面要求进贡蟋蟀。'责一头'应是'索要一只',不是'责备一只'。"}]},{"id":9,"level":1,"src":"2022·新高考II","context":"吴汉买田置宅,部下责备","tokens":["汉","还","让","之","曰"],"spots":[{"tok_idx":2,"word":"让","signal":"D2","signal_desc":"单字词,代入'谦让'语境不顺","type":"yiyi","subtype":"古今异义","modern":"让步 / 谦让","classical":"责备","why":"'让之曰'后面是责骂的话,这里'让'是'责备'之意。"}]},{"id":10,"level":1,"src":"教材·廉颇蔺相如列传","context":"蔺相如以礼相待门客","tokens":["吾","从","而","师","之"],"spots":[{"tok_idx":3,"word":"师","signal":"C2","signal_desc":"名词后跟代词宾语之","type":"huoyong","subtype":"意动","modern":"老师(名)","classical":"以...为师","why":"名词不能直接带代词宾语。'师之'=以之为师,意动用法。"}]},{"id":11,"level":2,"src":"2023·新高考I","context":"讨论治国之道,提倡农业抑制工商","tokens":["莫","善","于","抑","末","而","务","本"],"spots":[{"tok_idx":1,"word":"善","signal":"B1","signal_desc":"形容词后接介宾结构'于...'","type":"huoyong","subtype":"形作动","modern":"善良(形)","classical":"比...更好","why":"形容词带介宾'于抑末'活用为动词。'莫善于'=没有比...更好的。"},{"tok_idx":4,"word":"末","signal":"B2","signal_desc":"形容词处于动词'抑'后的宾语位置","type":"huoyong","subtype":"形作名","modern":"末端","classical":"工商业","why":"'抑'后必须接宾语。'末'活用为名词,与'本(农业)'相对,指工商业。"},{"tok_idx":7,"word":"本","signal":"B2","signal_desc":"形容词处于动词'务'后的宾语位置","type":"huoyong","subtype":"形作名","modern":"本来(形)","classical":"农业","why":"'务'后接宾语。'本'活用为名词,指农业(本业)。"}]},{"id":12,"level":2,"src":"2021·新高考II","context":"祖逖年少时品行不羁","tokens":["不","修","行检"],"spots":[{"tok_idx":1,"word":"修","signal":"D2","signal_desc":"单字词,代入'修建''行检'讲不通","type":"yiyi","subtype":"古今异义","modern":"修建 / 修理","classical":"讲究 / 注重","why":"'修建品行'不通。文言'修'有'讲究、注重'之意,如'不修边幅'。"},{"tok_idx":2,"word":"行检","signal":"D1","signal_desc":"双字词,现代汉语已不使用","type":"yiyi","subtype":"古今异义(双字)","modern":"(现代无此词)","classical":"品行操守","why":"'行'指行为,'检'指自我约束,合起来指品行操守。"}]},{"id":13,"level":2,"src":"2024·新高考I","context":"李陵兵败之处距边塞百余里","tokens":["陵败处","去","塞","百余里"],"spots":[{"tok_idx":1,"word":"去","signal":"D2","signal_desc":"单字词,代入'前往',后跟里数,逻辑不通","type":"yiyi","subtype":"古今异义","modern":"前往","classical":"距离","why":"'去X里'是固定表达,'去'是'距离',不是'前往'。"}]},{"id":14,"level":2,"src":"2022·新高考I","context":"魏国求救于燕国","tokens":["吾","岁","不","熟","二年","矣"],"spots":[{"tok_idx":1,"word":"岁","signal":"D2","signal_desc":"单字词,代入'年龄'作主语后接'不熟'荒唐","type":"yiyi","subtype":"古今异义","modern":"年龄","classical":"年成 / 收成","why":"'岁不熟'是固定搭配,'岁'指收成、年成。"},{"tok_idx":3,"word":"熟","signal":"D2","signal_desc":"前有否定副词'不',语义需结合主语'岁'","type":"yiyi","subtype":"古今异义","modern":"熟透 / 熟练","classical":"庄稼丰收","why":"和'岁(年成)'搭配,'熟'指庄稼丰收。"}]},{"id":15,"level":2,"src":"2022·新高考I","context":"魏王屈服求和","tokens":["魏王","折节","割地"],"spots":[{"tok_idx":1,"word":"折节","signal":"D1","signal_desc":"双字词,与现代'折节读书'(改变志向)不同","type":"yiyi","subtype":"古今异义(双字)","modern":"改变志向","classical":"屈服 / 屈己降志","why":"现代'折节'多指改变志向(贬→褒)。文言中是'屈己降志(屈服)'。"}]},{"id":16,"level":2,"src":"2021·新高考II","context":"祖逖知大功难成,愤激而病","tokens":["知","大功","不","遂",",","感激","发病"],"spots":[{"tok_idx":3,"word":"遂","signal":"D2","signal_desc":"单字词,代入'于是'作动词'不'的对象,讲不通","type":"yiyi","subtype":"古今异义","modern":"于是","classical":"成功 / 完成","why":"'不遂'=不成功。文言'遂'有'成功、达成'之意。"},{"tok_idx":5,"word":"感激","signal":"D1","signal_desc":"双字词,代入'感谢'与'发病'连接荒唐","type":"yiyi","subtype":"古今异义(双字)","modern":"感谢","classical":"感慨愤激","why":"怎么会'感谢'到生病?文言'感激'指内心感慨愤激,与'感动'同源。"}]},{"id":17,"level":2,"src":"2022·新高考II","context":"邓禹评价吴汉,称其威重","tokens":["吴公","差","强","人意"],"spots":[{"tok_idx":1,"word":"差","signal":"D2","signal_desc":"单字词,代入'差距'与现代成语义有别","type":"yiyi","subtype":"古今异义","modern":"差距 / 不好","classical":"稍微 / 略","why":"现代'差强人意'已是'勉强令人满意'(略带贬义)。原文'差'是'稍微','强人意'是'振奋人心',整体是褒义。"},{"tok_idx":2,"word":"强","signal":"B1","signal_desc":"形容词后接名词性宾语'人意'","type":"huoyong","subtype":"使动","modern":"强大(形)","classical":"使...振奋","why":"形容词带宾语'人意',活用为使动——使人意振奋。"}]},{"id":18,"level":2,"src":"2024·新高考I","context":"对李陵的评价用了意动","tokens":["壮","其","节"],"spots":[{"tok_idx":0,"word":"壮","signal":"C2","signal_desc":"形容词后跟代词宾语'其+N'结构","type":"huoyong","subtype":"意动","modern":"豪壮(形)","classical":"认为...豪壮","why":"形容词带名词性宾语'其节',典型意动信号——认为其节豪壮。"}]},{"id":19,"level":2,"src":"2024·新高考II","context":"汉高祖见四老,异之","tokens":["及","燕",",","置酒"],"spots":[{"tok_idx":1,"word":"燕","signal":"F","signal_desc":"代入本义'燕子'讲不通,后接'置酒'暗示宴饮","type":"tongjia","subtype":"通假","modern":"燕子","classical":"通'宴',宴饮","why":"'及燕,置酒'——'燕'代入本义讲不通,'置酒'暗示这里是宴饮场合,'燕'通'宴'。"}]},{"id":20,"level":2,"src":"2021·全国甲","context":"怜悯老人为之雇人代役","tokens":["愍","其","老"],"spots":[{"tok_idx":0,"word":"愍","signal":"F","signal_desc":"罕见字,代入需找本字","type":"tongjia","subtype":"通假","modern":"(罕见)","classical":"通'悯',怜悯","why":"'愍'通'悯',意为怜悯。'愍其老'=怜悯他年老。"},{"tok_idx":2,"word":"老","signal":"B2","signal_desc":"形容词前有定语'其',处于动词宾语位置","type":"huoyong","subtype":"形作名","modern":"老(形)","classical":"年老","why":"'其老'=他的年老,'老'活用为名词作宾语。"}]},{"id":21,"level":3,"src":"2024·新高考I","context":"边塞将李陵兵败的消息上报朝廷","tokens":["陵败处","去","塞","百余里",",","边塞","以","闻"],"spots":[{"tok_idx":1,"word":"去","signal":"D2","signal_desc":"单字词,代入'前往'后跟里数不通","type":"yiyi","subtype":"古今异义","modern":"前往","classical":"距离","why":"'去X里'是固定表达,意为'距离X里'。"},{"tok_idx":7,"word":"闻","signal":"C1","signal_desc":"动词独立成句,语义需要被听闻方,'以'后省略宾语","type":"huoyong","subtype":"使动","modern":"听闻","classical":"使...听闻 / 上报","why":"边塞自己怎么会'听闻'?这里是边塞把消息'使(朝廷)听闻'(上报)。"}]},{"id":22,"level":3,"src":"2023·新高考I","context":"韩非子论简易之政","tokens":["利","莫","长","于","简",",","福","莫","久","于","安"],"spots":[{"tok_idx":2,"word":"长","signal":"B1","signal_desc":"形容词后接介宾结构'于简'","type":"huoyong","subtype":"形作动","modern":"长(短)","classical":"比...更长 / 优于","why":"'莫长于'是固定句式——没有比...更长(优)的。'长'活用为动词。"},{"tok_idx":8,"word":"久","signal":"B1","signal_desc":"形容词后接介宾结构'于安'","type":"huoyong","subtype":"形作动","modern":"长久(形)","classical":"比...更持久","why":"和'长'对仗,'久'同样活用为动词。"}]},{"id":23,"level":3,"src":"2024·新高考II","context":"魏文侯尊重段干木","tokens":["客","段干木",",","过","其","闾",",","未尝","不","式"],"spots":[{"tok_idx":0,"word":"客","signal":"A1","signal_desc":"名词后直接跟专有名词'段干木'(无领属关系)","type":"huoyong","subtype":"名作动","modern":"客人(名)","classical":"把...当作客人(尊敬地接待)","why":"两个名词连用,前者无领属义。'客'活用作动词——把段干木当作客人(以宾客之礼相待)。注意:这种'把N当作'本质是意动,但因触发位置是A1而非C2(无代词),归为名作动大类。"},{"tok_idx":9,"word":"式","signal":"F","signal_desc":"代入本义'形式'讲不通,前有副词'未尝不'","type":"tongjia","subtype":"通假","modern":"形式","classical":"通'轼',扶轼致敬","why":"'未尝不式'——'式'通'轼',指扶着车前横木表示敬意。"}]},{"id":24,"level":3,"src":"教材·过秦论","context":"秦灭六国","tokens":["序","八州","而","朝","同列"],"spots":[{"tok_idx":0,"word":"序","signal":"A1","signal_desc":"名词后直接跟名词宾语'八州'","type":"huoyong","subtype":"名作动","modern":"次序(名)","classical":"排列次序","why":"'序'本是名词,后跟宾语'八州',活用为动词——使八州依次序(归顺)。"},{"tok_idx":3,"word":"朝","signal":"C1","signal_desc":"不及物动词后带宾语'同列'","type":"huoyong","subtype":"使动","modern":"朝拜","classical":"使...朝拜","why":"'朝'通常是不及物的(去朝见),后接宾语'同列(同等地位的人)',是使动——使同列朝拜。"}]},{"id":25,"level":3,"src":"教材·廉颇蔺相如列传","context":"蔺相如对舍人解释自己的退让","tokens":["先","国家","之急","而","后","私仇","也"],"spots":[{"tok_idx":0,"word":"先","signal":"B1","signal_desc":"形容词后接名词性短语'国家之急'","type":"huoyong","subtype":"意动","modern":"先(副)","classical":"以...为先","why":"形容词带宾语,意动——以国家之急为先。"},{"tok_idx":4,"word":"后","signal":"B1","signal_desc":"形容词后接名词宾语'私仇'","type":"huoyong","subtype":"意动","modern":"后(副)","classical":"以...为后","why":"和'先'对仗,'后'同样意动——以私仇为后。"}]},{"id":26,"level":3,"src":"教材·赤壁赋","context":"苏子描述泛舟之乐","tokens":["侣","鱼虾","而","友","麋鹿"],"spots":[{"tok_idx":0,"word":"侣","signal":"A1","signal_desc":"名词后直接跟名词宾语'鱼虾'","type":"huoyong","subtype":"名作动","modern":"伴侣(名)","classical":"以...为伴侣","why":"'侣鱼虾'=以鱼虾为伴侣,名作动用法。"},{"tok_idx":3,"word":"友","signal":"A1","signal_desc":"名词后直接跟名词宾语'麋鹿'","type":"huoyong","subtype":"名作动","modern":"朋友(名)","classical":"以...为朋友","why":"和'侣'对仗,'友'同样名作动——以麋鹿为朋友。"}]},{"id":27,"level":3,"src":"教材·烛之武退秦师","context":"烛之武向秦伯陈词","tokens":["越","国","以","鄙","远"],"spots":[{"tok_idx":3,"word":"鄙","signal":"B1","signal_desc":"形容词后接形容词性宾语'远'(本身又是形作名)","type":"huoyong","subtype":"意动/名作动","modern":"鄙陋(形)","classical":"把...当作边邑","why":"'鄙'本指边境地区,这里活用为意动——把远地当作边邑。"},{"tok_idx":4,"word":"远","signal":"B2","signal_desc":"形容词处于动词'鄙'的宾语位置","type":"huoyong","subtype":"形作名","modern":"远(形)","classical":"远地","why":"形容词处于宾语位置,活用为名词——远方的地方。"}]},{"id":28,"level":3,"src":"教材·师说","context":"韩愈批判士大夫不愿从师","tokens":["小","学","而","大","遗"],"spots":[{"tok_idx":0,"word":"小","signal":"B2","signal_desc":"形容词处于动词学的宾语位置","type":"huoyong","subtype":"形作名","modern":"小学(现代:基础教育)","classical":"小的方面","why":"'小'与'大'对举,均是形作名——小的方面、大的方面。注意'小学'不是现代'小学校',这里的'小学'是动宾结构(学小的方面)。"},{"tok_idx":3,"word":"大","signal":"B2","signal_desc":"形容词处于动词遗的宾语位置","type":"huoyong","subtype":"形作名","modern":"大(形)","classical":"大的方面","why":"'遗(舍弃)'后接'大',形容词活用为名词。"}]},{"id":29,"level":3,"src":"教材·鸿门宴","context":"项伯救张良","tokens":["项伯","杀人",",","臣","活","之"],"spots":[{"tok_idx":4,"word":"活","signal":"C1","signal_desc":"不及物动词后带代词宾语'之'","type":"huoyong","subtype":"使动","modern":"活(动/形)","classical":"使...活下来","why":"'活'通常不及物(自己活),后接宾语'之',是使动——使他活下来。"}]},{"id":30,"level":3,"src":"教材·邹忌讽齐王纳谏","context":"邹忌问妻子","tokens":["吾","妻","之","美","我","者",",","私","我","也"],"spots":[{"tok_idx":3,"word":"美","signal":"C2","signal_desc":"形容词后跟代词宾语'我'","type":"huoyong","subtype":"意动","modern":"美(形)","classical":"认为...美","why":"形容词带代词宾语,典型意动——认为我美。"},{"tok_idx":7,"word":"私","signal":"C2","signal_desc":"形容词后跟代词宾语'我'","type":"huoyong","subtype":"意动/形作动","modern":"私(形)","classical":"偏爱","why":"'私'后跟'我',活用为动词——偏爱我。"}]}],"BASIC":[{"id":1,"cat":"huoyong","src":"《劝学》","tokens":["君","子","博","学","而","日","参","省","乎","己"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"日","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"每天","why":"名词作状语:每天。出处:《劝学》"}]},{"id":2,"cat":"huoyong","src":"《劝学》","tokens":["上","食","埃","土",",","下","饮","黄","泉"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"上","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"向上、向下","why":"名词作状语:向上、向下。出处:《劝学》"},{"tok_idx":5,"all_idxs":[5],"word":"下","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"向上、向下","why":"名词作状语:向上、向下。出处:《劝学》"}]},{"id":3,"cat":"huoyong","src":"《劝学》","tokens":["假","舟","楫","者",",","非","能","水","也"],"spots":[{"tok_idx":7,"all_idxs":[7],"word":"水","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"游水、游泳","why":"名词作动词:游水、游泳。出处:《劝学》"}]},{"id":4,"cat":"huoyong","src":"《师说》","tokens":["吾","从","而","师","之"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"师","signal":"C2","signal_desc":"名词或形容词后跟代词宾语(之/我/汝/其+N)","type":"huoyong","subtype":"意动用法","modern":"","classical":"以……为师","why":"意动用法:以……为师。出处:《师说》"}]},{"id":5,"cat":"huoyong","src":"《师说》","tokens":["则","耻","师","焉",",","惑","矣"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"耻","signal":"C2","signal_desc":"名词或形容词后跟代词宾语(之/我/汝/其+N)","type":"huoyong","subtype":"意动用法","modern":"","classical":"以……为耻","why":"意动用法:以……为耻。出处:《师说》"}]},{"id":6,"cat":"huoyong","src":"《师说》","tokens":["小","学","而","大","遗"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"小","signal":"B2","signal_desc":"形容词处于动词后/介词后的宾语位置","type":"huoyong","subtype":"形容词作名词","modern":"","classical":"小的方面、大的方面","why":"形容词作名词:小的方面、大的方面。出处:《师说》"},{"tok_idx":3,"all_idxs":[3],"word":"大","signal":"B2","signal_desc":"形容词处于动词后/介词后的宾语位置","type":"huoyong","subtype":"形容词作名词","modern":"","classical":"小的方面、大的方面","why":"形容词作名词:小的方面、大的方面。出处:《师说》"}]},{"id":7,"cat":"huoyong","src":"《师说》","tokens":["圣","益","圣",",","愚","益","愚"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"圣","signal":"B2","signal_desc":"形容词处于动词后/介词后的宾语位置","type":"huoyong","subtype":"形容词作名词","modern":"","classical":"圣人、愚人","why":"形容词作名词:圣人、愚人。出处:《师说》"},{"tok_idx":4,"all_idxs":[4],"word":"愚","signal":"B2","signal_desc":"形容词处于动词后/介词后的宾语位置","type":"huoyong","subtype":"形容词作名词","modern":"","classical":"圣人、愚人","why":"形容词作名词:圣人、愚人。出处:《师说》"}]},{"id":8,"cat":"huoyong","src":"《赤壁赋》","tokens":["西","望","夏","口",",","东","望","武","昌"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"西","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"向西、向东","why":"名词作状语:向西、向东。出处:《赤壁赋》"},{"tok_idx":5,"all_idxs":[5],"word":"东","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"向西、向东","why":"名词作状语:向西、向东。出处:《赤壁赋》"}]},{"id":9,"cat":"huoyong","src":"《赤壁赋》","tokens":["舞","幽","壑","之","潜","蛟",",","泣","孤","舟","之","嫠","妇"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"舞","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……起舞、使……哭泣","why":"使动用法:使……起舞、使……哭泣。出处:《赤壁赋》"},{"tok_idx":7,"all_idxs":[7],"word":"泣","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……起舞、使……哭泣","why":"使动用法:使……起舞、使……哭泣。出处:《赤壁赋》"}]},{"id":10,"cat":"huoyong","src":"《赤壁赋》","tokens":["侣","鱼","虾","而","友","麋","鹿"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"侣","signal":"C2","signal_desc":"名词或形容词后跟代词宾语(之/我/汝/其+N)","type":"huoyong","subtype":"意动用法","modern":"","classical":"以……为伴侣、以……为朋友","why":"意动用法:以……为伴侣、以……为朋友。出处:《赤壁赋》"},{"tok_idx":4,"all_idxs":[4],"word":"友","signal":"C2","signal_desc":"名词或形容词后跟代词宾语(之/我/汝/其+N)","type":"huoyong","subtype":"意动用法","modern":"","classical":"以……为伴侣、以……为朋友","why":"意动用法:以……为伴侣、以……为朋友。出处:《赤壁赋》"}]},{"id":11,"cat":"huoyong","src":"《赤壁赋》","tokens":["顺","流","而","东","也"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"东","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"向东进军","why":"名词作动词:向东进军。出处:《赤壁赋》"}]},{"id":12,"cat":"huoyong","src":"《登泰山记》","tokens":["明","烛","天","南"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"烛","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"照","why":"名词作动词:照。出处:《登泰山记》"}]},{"id":13,"cat":"huoyong","src":"《侍坐》","tokens":["风","乎","舞","雩"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"风","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"吹风、乘凉","why":"名词作动词:吹风、乘凉。出处:《侍坐》"}]},{"id":14,"cat":"huoyong","src":"《侍坐》","tokens":["赤","也","为","之","小",",","孰","能","为","之","大"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"小","signal":"B2","signal_desc":"形容词处于动词后/介词后的宾语位置","type":"huoyong","subtype":"形容词作名词","modern":"","classical":"小相、大相","why":"形容词作名词:小相、大相。出处:《侍坐》"},{"tok_idx":10,"all_idxs":[10],"word":"大","signal":"B2","signal_desc":"形容词处于动词后/介词后的宾语位置","type":"huoyong","subtype":"形容词作名词","modern":"","classical":"小相、大相","why":"形容词作名词:小相、大相。出处:《侍坐》"}]},{"id":15,"cat":"huoyong","src":"《齐桓晋文之事》","tokens":["危","士","臣"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"危","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……处于危险","why":"使动用法:使……处于危险。出处:《齐桓晋文之事》"}]},{"id":16,"cat":"huoyong","src":"《齐桓晋文之事》","tokens":["朝","秦","楚"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"朝","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……朝拜","why":"使动用法:使……朝拜。出处:《齐桓晋文之事》"}]},{"id":17,"cat":"huoyong","src":"《烛之武退秦师》","tokens":["烛","之","武","退","秦","师"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"退","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……撤退","why":"使动用法:使……撤退。出处:《烛之武退秦师》"}]},{"id":18,"cat":"huoyong","src":"《烛之武退秦师》","tokens":["夜","缒","而","出"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"夜","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"在夜里","why":"名词作状语:在夜里。出处:《烛之武退秦师》"}]},{"id":19,"cat":"huoyong","src":"《烛之武退秦师》","tokens":["既","东","封","郑",",","又","欲","肆","其","西","封"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"东","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"在东边","why":"名词作状语:在东边。出处:《烛之武退秦师》"}]},{"id":20,"cat":"huoyong","src":"《烛之武退秦师》","tokens":["越","国","以","鄙","远"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"鄙","signal":"C2","signal_desc":"名词或形容词后跟代词宾语(之/我/汝/其+N)","type":"huoyong","subtype":"名词的意动用法","modern":"","classical":"把……当作边邑","why":"名词的意动用法:把……当作边邑。出处:《烛之武退秦师》"}]},{"id":21,"cat":"huoyong","src":"《鸿门宴》","tokens":["沛","公","军","霸","上"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"军","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"驻军","why":"名词作动词:驻军。出处:《鸿门宴》"}]},{"id":22,"cat":"huoyong","src":"《鸿门宴》","tokens":["范","增","数","目","项","王"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"目","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"使眼色","why":"名词作动词:使眼色。出处:《鸿门宴》"}]},{"id":23,"cat":"huoyong","src":"《鸿门宴》","tokens":["常","以","身","翼","蔽","沛","公"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"翼","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"像翅膀一样","why":"名词作状语:像翅膀一样。出处:《鸿门宴》"}]},{"id":24,"cat":"huoyong","src":"《鸿门宴》","tokens":["项","伯","杀","人",",","臣","活","之"],"spots":[{"tok_idx":6,"all_idxs":[6],"word":"活","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……活下来","why":"使动用法:使……活下来。出处:《鸿门宴》"}]},{"id":25,"cat":"huoyong","src":"《苏武传》","tokens":["羝","乳","乃","得","归"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"乳","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"生育、生子","why":"名词作动词:生育、生子。出处:《苏武传》"}]},{"id":26,"cat":"huoyong","src":"《苏武传》","tokens":["杖","汉","节","牧","羊"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"杖","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"执、拄","why":"名词作动词:执、拄。出处:《苏武传》"}]},{"id":27,"cat":"huoyong","src":"《苏武传》","tokens":["反","欲","斗","两","主"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"斗","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……争斗","why":"使动用法:使……争斗。出处:《苏武传》"}]},{"id":28,"cat":"huoyong","src":"《屈原列传》","tokens":["屈","平","疾","王","听","之","不","聪","也"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"听","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"动词作名词","modern":"","classical":"听觉、听力","why":"动词作名词:听觉、听力。出处:《屈原列传》"}]},{"id":29,"cat":"huoyong","src":"《屈原列传》","tokens":["邪","曲","之","害","公","也"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"邪曲","signal":"B2","signal_desc":"形容词处于动词后/介词后的宾语位置","type":"huoyong","subtype":"形容词作名词","modern":"","classical":"邪恶不正的人","why":"形容词作名词:邪恶不正的人。出处:《屈原列传》"}]},{"id":30,"cat":"huoyong","src":"《屈原列传》","tokens":["明","道","德","之","广","崇"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"明","signal":"B1","signal_desc":"形容词后接名词性宾语或介宾(非代词)","type":"huoyong","subtype":"形容词作动词","modern":"","classical":"阐明","why":"形容词作动词:阐明。出处:《屈原列传》"}]},{"id":31,"cat":"huoyong","src":"《过秦论》","tokens":["席","卷","天","下",",","包","举","宇","内",",","囊","括","四","海"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"席","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"像席子一样、像包裹一样、像口袋一样","why":"名词作状语:像席子一样、像包裹一样、像口袋一样。出处:《过秦论》"},{"tok_idx":5,"all_idxs":[5],"word":"包","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"像席子一样、像包裹一样、像口袋一样","why":"名词作状语:像席子一样、像包裹一样、像口袋一样。出处:《过秦论》"},{"tok_idx":10,"all_idxs":[10],"word":"囊","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"像席子一样、像包裹一样、像口袋一样","why":"名词作状语:像席子一样、像包裹一样、像口袋一样。出处:《过秦论》"}]},{"id":32,"cat":"huoyong","src":"《过秦论》","tokens":["履","至","尊","而","制","六","合"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"履","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"登上","why":"名词作动词:登上。出处:《过秦论》"}]},{"id":33,"cat":"huoyong","src":"《过秦论》","tokens":["且","夫","天","下","非","小","弱","也"],"spots":[{"tok_idx":5,"all_idxs":[5,6],"word":"小弱","signal":"B1","signal_desc":"形容词后接名词性宾语或介宾(非代词)","type":"huoyong","subtype":"形容词作动词","modern":"","classical":"变小、变弱","why":"形容词作动词:变小、变弱。出处:《过秦论》"}]},{"id":34,"cat":"huoyong","src":"《过秦论》","tokens":["序","八","州","而","朝","同","列"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"序","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"招致、使……依次排列","why":"名词作动词:招致、使……依次排列。出处:《过秦论》"}]},{"id":35,"cat":"huoyong","src":"《五代史伶官传序》","tokens":["原","庄","宗","之","所","以","得","天","下"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"原","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"推究本源","why":"名词作动词:推究本源。出处:《五代史伶官传序》"}]},{"id":36,"cat":"huoyong","src":"《五代史伶官传序》","tokens":["忧","劳","可","以","兴","国",",","逸","豫","可","以","亡","身"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"兴","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……兴盛、使……灭亡","why":"使动用法:使……兴盛、使……灭亡。出处:《五代史伶官传序》"},{"tok_idx":11,"all_idxs":[11],"word":"亡","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……兴盛、使……灭亡","why":"使动用法:使……兴盛、使……灭亡。出处:《五代史伶官传序》"}]},{"id":37,"cat":"huoyong","src":"《五代史伶官传序》","tokens":["函","梁","君","臣","之","首"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"函","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"用木匣装","why":"名词作动词:用木匣装。出处:《五代史伶官传序》"}]},{"id":38,"cat":"huoyong","src":"《五代史伶官传序》","tokens":["一","夫","夜","呼",",","乱","者","四","应"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"夜","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"在夜里","why":"名词作状语:在夜里。出处:《五代史伶官传序》"}]},{"id":39,"cat":"huoyong","src":"《阿房宫赋》","tokens":["骊","山","北","构","而","西","折"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"北","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"向北、向西","why":"名词作状语:向北、向西。出处:《阿房宫赋》"},{"tok_idx":5,"all_idxs":[5],"word":"西","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"向北、向西","why":"名词作状语:向北、向西。出处:《阿房宫赋》"}]},{"id":40,"cat":"huoyong","src":"《阿房宫赋》","tokens":["辇","来","于","秦"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"辇","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"乘辇车","why":"名词作状语:乘辇车。出处:《阿房宫赋》"}]},{"id":41,"cat":"huoyong","src":"《阿房宫赋》","tokens":["朝","歌","夜","弦"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"歌","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"唱歌、弹琴","why":"名词作动词:唱歌、弹琴。出处:《阿房宫赋》"},{"tok_idx":3,"all_idxs":[3],"word":"弦","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"唱歌、弹琴","why":"名词作动词:唱歌、弹琴。出处:《阿房宫赋》"}]},{"id":42,"cat":"huoyong","src":"《阿房宫赋》","tokens":["族","秦","者","秦","也",",","非","天","下","也"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"族","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"灭族","why":"名词作动词:灭族。出处:《阿房宫赋》"}]},{"id":43,"cat":"huoyong","src":"《六国论》","tokens":["日","削","月","割",",","以","趋","于","亡"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"日","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"一天天、一月月","why":"名词作状语:一天天、一月月。出处:《六国论》"},{"tok_idx":2,"all_idxs":[2],"word":"月","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"一天天、一月月","why":"名词作状语:一天天、一月月。出处:《六国论》"}]},{"id":44,"cat":"huoyong","src":"《六国论》","tokens":["以","事","秦","之","心","礼","天","下","之","奇","才"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"礼","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"礼待","why":"名词作动词:礼待。出处:《六国论》"}]},{"id":45,"cat":"huoyong","src":"《六国论》","tokens":["惜","其","用","武","而","不","终","也"],"spots":[{"tok_idx":6,"all_idxs":[6],"word":"终","signal":"B1","signal_desc":"形容词后接名词性宾语或介宾(非代词)","type":"huoyong","subtype":"形容词作动词","modern":"","classical":"坚持到底","why":"形容词作动词:坚持到底。出处:《六国论》"}]},{"id":46,"cat":"huoyong","src":"《项脊轩志》","tokens":["前","辟","四","窗",",","垣","墙","周","庭"],"spots":[{"tok_idx":5,"all_idxs":[5,6],"word":"垣墙","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"砌上垣墙","why":"名词作动词:砌上垣墙。出处:《项脊轩志》"}]},{"id":47,"cat":"huoyong","src":"《项脊轩志》","tokens":["东","犬","西","吠"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"西","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"向西","why":"名词作状语:向西。出处:《项脊轩志》"}]},{"id":48,"cat":"huoyong","src":"《项脊轩志》","tokens":["乳","二","世"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"乳","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"用乳汁喂养","why":"名词作动词:用乳汁喂养。出处:《项脊轩志》"}]},{"id":49,"cat":"huoyong","src":"《谏太宗十思疏》","tokens":["乐","盘","游","则","思","三","驱","以","为","度"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"乐","signal":"C2","signal_desc":"名词或形容词后跟代词宾语(之/我/汝/其+N)","type":"huoyong","subtype":"意动用法","modern":"","classical":"以……为乐","why":"意动用法:以……为乐。出处:《谏太宗十思疏》"}]},{"id":50,"cat":"huoyong","src":"《谏太宗十思疏》","tokens":["则","思","正","身","以","黜","恶"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"正","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……端正","why":"使动用法:使……端正。出处:《谏太宗十思疏》"}]},{"id":51,"cat":"huoyong","src":"《谏太宗十思疏》","tokens":["何","必","劳","神","苦","思"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"苦","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……劳累","why":"使动用法:使……劳累。出处:《谏太宗十思疏》"}]},{"id":52,"cat":"huoyong","src":"《答司马谏议书》","tokens":["以","膏","泽","斯","民"],"spots":[{"tok_idx":1,"all_idxs":[1,2],"word":"膏泽","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"施加恩惠","why":"名词作动词:施加恩惠。出处:《答司马谏议书》"}]},{"id":53,"cat":"huoyong","src":"《兰亭集序》","tokens":["群","贤","毕","至",",","少","长","咸","集"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"贤","signal":"B2","signal_desc":"形容词处于动词后/介词后的宾语位置","type":"huoyong","subtype":"形容词作名词","modern":"","classical":"贤才、年少和年长的人","why":"形容词作名词:贤才、年少和年长的人。出处:《兰亭集序》"},{"tok_idx":5,"all_idxs":[5,6],"word":"少长","signal":"B2","signal_desc":"形容词处于动词后/介词后的宾语位置","type":"huoyong","subtype":"形容词作名词","modern":"","classical":"贤才、年少和年长的人","why":"形容词作名词:贤才、年少和年长的人。出处:《兰亭集序》"}]},{"id":54,"cat":"huoyong","src":"《兰亭集序》","tokens":["一","觞","一","咏"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"觞","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"饮酒","why":"名词作动词:饮酒。出处:《兰亭集序》"}]},{"id":55,"cat":"huoyong","src":"《兰亭集序》","tokens":["齐","彭","殇","为","妄","作"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"齐","signal":"C2","signal_desc":"名词或形容词后跟代词宾语(之/我/汝/其+N)","type":"huoyong","subtype":"意动用法","modern":"","classical":"把……看作相等","why":"意动用法:把……看作相等。出处:《兰亭集序》"}]},{"id":56,"cat":"yiyi","src":"《劝学》","tokens":["君","子","博","学","而","日","参","省","乎","己"],"spots":[{"tok_idx":2,"all_idxs":[2,3],"word":"博学","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"广博地学习;今义:学问广博","why":"古义:广博地学习;今义:学问广博。出处:《劝学》"}]},{"id":57,"cat":"yiyi","src":"《劝学》","tokens":["非","蛇","鳝","之","穴","无","可","寄","托","者"],"spots":[{"tok_idx":7,"all_idxs":[7,8],"word":"寄托","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"藏身;今义:把希望、感情等放在某人/某事物上","why":"古义:藏身;今义:把希望、感情等放在某人/某事物上。出处:《劝学》"}]},{"id":58,"cat":"yiyi","src":"《师说》","tokens":["古","之","学","者","必","有","师"],"spots":[{"tok_idx":2,"all_idxs":[2,3],"word":"学者","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"求学的人;今义:在学术上有一定成就的人","why":"古义:求学的人;今义:在学术上有一定成就的人。出处:《师说》"}]},{"id":59,"cat":"yiyi","src":"《师说》","tokens":["师","者",",","所","以","传","道","受","业","解","惑","也"],"spots":[{"tok_idx":3,"all_idxs":[3,4],"word":"所以","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"用来……的;今义:表因果关系的连词","why":"古义:用来……的;今义:表因果关系的连词。出处:《师说》"}]},{"id":60,"cat":"yiyi","src":"《师说》","tokens":["今","之","众","人",",","其","下","圣","人","也","亦","远","矣"],"spots":[{"tok_idx":2,"all_idxs":[2,3],"word":"众人","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"一般人;今义:大家、许多人","why":"古义:一般人;今义:大家、许多人。出处:《师说》"}]},{"id":61,"cat":"yiyi","src":"《师说》","tokens":["小","学","而","大","遗"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"小学","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"小的方面学习;今义:对儿童、少年实施初等教育的学校","why":"古义:小的方面学习;今义:对儿童、少年实施初等教育的学校。出处:《师说》"}]},{"id":62,"cat":"yiyi","src":"《师说》","tokens":["吾","从","而","师","之"],"spots":[{"tok_idx":1,"all_idxs":[1,2],"word":"从而","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"跟从并且;今义:因此就","why":"古义:跟从并且;今义:因此就。出处:《师说》"}]},{"id":63,"cat":"yiyi","src":"《赤壁赋》","tokens":["白","露","横","江",",","水","光","接","天"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"白露","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"白茫茫的水汽;今义:二十四节气之一","why":"古义:白茫茫的水汽;今义:二十四节气之一。出处:《赤壁赋》"}]},{"id":64,"cat":"yiyi","src":"《赤壁赋》","tokens":["凌","万","顷","之","茫","然"],"spots":[{"tok_idx":4,"all_idxs":[4,5],"word":"茫然","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"旷远的样子;今义:完全不知道、失意","why":"古义:旷远的样子;今义:完全不知道、失意。出处:《赤壁赋》"}]},{"id":65,"cat":"yiyi","src":"《赤壁赋》","tokens":["望","美","人","兮","天","一","方"],"spots":[{"tok_idx":1,"all_idxs":[1,2],"word":"美人","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"所思慕的人;今义:美貌的女子","why":"古义:所思慕的人;今义:美貌的女子。出处:《赤壁赋》"}]},{"id":66,"cat":"yiyi","src":"《烛之武退秦师》","tokens":["行","李","之","往","来",",","共","其","乏","困"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"行李","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"外交使者;今义:出门所带的东西","why":"古义:外交使者;今义:出门所带的东西。出处:《烛之武退秦师》"}]},{"id":67,"cat":"yiyi","src":"《烛之武退秦师》","tokens":["若","舍","郑","以","为","东","道","主"],"spots":[{"tok_idx":5,"all_idxs":[5,6,7],"word":"东道主","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"东方道路上(招待过客)的主人;今义:请客的主人","why":"古义:东方道路上(招待过客)的主人;今义:请客的主人。出处:《烛之武退秦师》"}]},{"id":68,"cat":"yiyi","src":"《烛之武退秦师》","tokens":["微","夫","人","之","力","不","及","此"],"spots":[{"tok_idx":1,"all_idxs":[1,2],"word":"夫人","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"那人;今义:对已婚妇女的尊称","why":"古义:那人;今义:对已婚妇女的尊称。出处:《烛之武退秦师》"}]},{"id":69,"cat":"yiyi","src":"《鸿门宴》","tokens":["沛","公","居","山","东","时"],"spots":[{"tok_idx":3,"all_idxs":[3,4],"word":"山东","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"崤山以东;今义:山东省","why":"古义:崤山以东;今义:山东省。出处:《鸿门宴》"}]},{"id":70,"cat":"yiyi","src":"《鸿门宴》","tokens":["沛","公","奉","卮","酒","为","寿",",","约","为","婚","姻"],"spots":[{"tok_idx":10,"all_idxs":[10,11],"word":"婚姻","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"结成亲家;今义:因结婚而产生的夫妻关系","why":"古义:结成亲家;今义:因结婚而产生的夫妻关系。出处:《鸿门宴》"}]},{"id":71,"cat":"yiyi","src":"《鸿门宴》","tokens":["备","他","盗","之","出","入","与","非","常","也"],"spots":[{"tok_idx":7,"all_idxs":[7,8],"word":"非常","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"意外的变故;今义:十分、很","why":"古义:意外的变故;今义:十分、很。出处:《鸿门宴》"}]},{"id":72,"cat":"yiyi","src":"《鸿门宴》","tokens":["将","军","战","河","北",",","臣","战","河","南"],"spots":[{"tok_idx":3,"all_idxs":[3,4],"word":"河北","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"黄河以北、黄河以南;今义:河北省、河南省","why":"古义:黄河以北、黄河以南;今义:河北省、河南省。出处:《鸿门宴》"},{"tok_idx":8,"all_idxs":[8,9],"word":"河南","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"黄河以北、黄河以南;今义:河北省、河南省","why":"古义:黄河以北、黄河以南;今义:河北省、河南省。出处:《鸿门宴》"}]},{"id":73,"cat":"yiyi","src":"《鸿门宴》","tokens":["今","人","有","大","功","而","击","之",",","不","义","也"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"今人","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"现在别人(指刘邦);今义:现代的人","why":"古义:现在别人(指刘邦);今义:现代的人。出处:《鸿门宴》"}]},{"id":74,"cat":"yiyi","src":"《齐桓晋文之事》","tokens":["百","姓","皆","以","王","为","爱","也"],"spots":[{"tok_idx":6,"all_idxs":[6],"word":"爱","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古义","modern":"","classical":"吝啬;今义:喜爱、热爱","why":"古义:吝啬;今义:喜爱、热爱。出处:《齐桓晋文之事》"}]},{"id":75,"cat":"yiyi","src":"《齐桓晋文之事》","tokens":["莅","中","国","而","抚","四","夷","也"],"spots":[{"tok_idx":1,"all_idxs":[1,2],"word":"中国","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"中原地区;今义:中华人民共和国","why":"古义:中原地区;今义:中华人民共和国。出处:《齐桓晋文之事》"}]},{"id":76,"cat":"yiyi","src":"《齐桓晋文之事》","tokens":["然","后","从","而","刑","之"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"然后","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"这样以后;今义:连词,表承接","why":"古义:这样以后;今义:连词,表承接。出处:《齐桓晋文之事》"}]},{"id":77,"cat":"yiyi","src":"《谏逐客书》","tokens":["由","此","观","之",",","客","何","负","于","秦","哉"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"客","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古义","modern":"","classical":"客卿(他国来仕之人);今义:客人","why":"古义:客卿(他国来仕之人);今义:客人。出处:《谏逐客书》"}]},{"id":78,"cat":"yiyi","src":"《屈原列传》","tokens":["明","年",",","秦","割","汉","中","地","与","楚","以","和"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"明年","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"第二年;今义:今年的下一年","why":"古义:第二年;今义:今年的下一年。出处:《屈原列传》"}]},{"id":79,"cat":"yiyi","src":"《屈原列传》","tokens":["形","容","枯","槁"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"形容","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"外貌、模样;今义:对事物的形象或性质加以描述","why":"古义:外貌、模样;今义:对事物的形象或性质加以描述。出处:《屈原列传》"}]},{"id":80,"cat":"yiyi","src":"《屈原列传》","tokens":["颜","色","憔","悴"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"颜色","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"脸色;今义:色彩","why":"古义:脸色;今义:色彩。出处:《屈原列传》"}]},{"id":81,"cat":"yiyi","src":"《屈原列传》","tokens":["设","诡","辩","于","怀","王","之","宠","姬","郑","袖"],"spots":[{"tok_idx":1,"all_idxs":[1,2],"word":"诡辩","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"欺诈的言论;今义:无理狡辩","why":"古义:欺诈的言论;今义:无理狡辩。出处:《屈原列传》"}]},{"id":82,"cat":"yiyi","src":"《苏武传》","tokens":["卧","起","操","持",",","节","旄","尽","落"],"spots":[{"tok_idx":2,"all_idxs":[2,3],"word":"操持","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"拿着;今义:料理、筹划","why":"古义:拿着;今义:料理、筹划。出处:《苏武传》"}]},{"id":83,"cat":"yiyi","src":"《苏武传》","tokens":["皆","为","陛","下","所","成","就"],"spots":[{"tok_idx":5,"all_idxs":[5,6],"word":"成就","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"栽培、提拔;今义:事业上的成绩","why":"古义:栽培、提拔;今义:事业上的成绩。出处:《苏武传》"}]},{"id":84,"cat":"yiyi","src":"《苏武传》","tokens":["我","丈","人","行","也"],"spots":[{"tok_idx":1,"all_idxs":[1,2],"word":"丈人","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"对长辈的尊称;今义:岳父","why":"古义:对长辈的尊称;今义:岳父。出处:《苏武传》"}]},{"id":85,"cat":"yiyi","src":"《过秦论》","tokens":["于","是","秦","人","拱","手","而","取","西","河","之","外"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"于是","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"在这时;今义:连词,表承接","why":"古义:在这时;今义:连词,表承接。出处:《过秦论》"}]},{"id":86,"cat":"yiyi","src":"《过秦论》","tokens":["宽","厚","而","爱","人"],"spots":[{"tok_idx":3,"all_idxs":[3,4],"word":"爱人","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"爱护人;今义:配偶","why":"古义:爱护人;今义:配偶。出处:《过秦论》"}]},{"id":87,"cat":"yiyi","src":"《过秦论》","tokens":["赢","粮","而","景","从"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"赢","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义/重点实词","modern":"","classical":"担负、背","why":"古今异义/重点实词:担负、背。出处:《过秦论》"}]},{"id":88,"cat":"yiyi","src":"《过秦论》","tokens":["山","东","豪","俊","遂","并","起"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"山东","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"崤山以东;今义:山东省","why":"古义:崤山以东;今义:山东省。出处:《过秦论》"}]},{"id":89,"cat":"yiyi","src":"《五代史伶官传序》","tokens":["则","遣","从","事","以","一","少","牢","告","庙"],"spots":[{"tok_idx":2,"all_idxs":[2,3],"word":"从事","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"官名,泛指一般属官;今义:做某种事情","why":"古义:官名,泛指一般属官;今义:做某种事情。出处:《五代史伶官传序》"}]},{"id":90,"cat":"yiyi","src":"《五代史伶官传序》","tokens":["岂","非","人","事","哉"],"spots":[{"tok_idx":2,"all_idxs":[2,3],"word":"人事","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"人为之事、人的所作所为;今义:人事工作","why":"古义:人为之事、人的所作所为;今义:人事工作。出处:《五代史伶官传序》"}]},{"id":91,"cat":"yiyi","src":"《阿房宫赋》","tokens":["各","抱","地","势",",","钩","心","斗","角"],"spots":[{"tok_idx":5,"all_idxs":[5,6,7,8],"word":"钩心斗角","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"宫室结构错落参差;今义:各用心机互相排挤","why":"古义:宫室结构错落参差;今义:各用心机互相排挤。出处:《阿房宫赋》"}]},{"id":92,"cat":"yiyi","src":"《阿房宫赋》","tokens":["一","旦","不","能","有",",","输","来","其","间"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"一旦","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"一朝、有一天;今义:用于假设","why":"古义:一朝、有一天;今义:用于假设。出处:《阿房宫赋》"}]},{"id":93,"cat":"yiyi","src":"《六国论》","tokens":["思","厥","先","祖","父"],"spots":[{"tok_idx":3,"all_idxs":[3,4],"word":"祖父","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"祖辈和父辈;今义:父亲的父亲","why":"古义:祖辈和父辈;今义:父亲的父亲。出处:《六国论》"}]},{"id":94,"cat":"yiyi","src":"《六国论》","tokens":["至","于","颠","覆",",","理","固","宜","然"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"至于","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"到……结局;今义:表另提一事","why":"古义:到……结局;今义:表另提一事。出处:《六国论》"}]},{"id":95,"cat":"yiyi","src":"《六国论》","tokens":["可","谓","智","力","孤","危"],"spots":[{"tok_idx":2,"all_idxs":[2,3],"word":"智力","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"智谋和力量;今义:理解事物的能力","why":"古义:智谋和力量;今义:理解事物的能力。出处:《六国论》"}]},{"id":96,"cat":"yiyi","src":"《六国论》","tokens":["而","从","六","国","破","亡","之","故","事"],"spots":[{"tok_idx":7,"all_idxs":[7,8],"word":"故事","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"旧事、前例;今义:文学体裁","why":"古义:旧事、前例;今义:文学体裁。出处:《六国论》"}]},{"id":97,"cat":"yiyi","src":"《项脊轩志》","tokens":["室","仅","方","丈"],"spots":[{"tok_idx":2,"all_idxs":[2,3],"word":"方丈","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"一丈见方;今义:寺院住持","why":"古义:一丈见方;今义:寺院住持。出处:《项脊轩志》"}]},{"id":98,"cat":"yiyi","src":"《项脊轩志》","tokens":["内","外","多","置","小","门","墙",",","往","往","而","是"],"spots":[{"tok_idx":8,"all_idxs":[8,9],"word":"往往","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"到处;今义:常常","why":"古义:到处;今义:常常。出处:《项脊轩志》"}]},{"id":99,"cat":"yiyi","src":"《兰亭集序》","tokens":["列","坐","其","次"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"次","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古义","modern":"","classical":"旁边;今义:次序、次数","why":"古义:旁边;今义:次序、次数。出处:《兰亭集序》"}]},{"id":100,"cat":"yiyi","src":"《兰亭集序》","tokens":["夫","人","之","相","与"],"spots":[{"tok_idx":3,"all_idxs":[3,4],"word":"相与","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"相互交往;今义:相处、关系","why":"古义:相互交往;今义:相处、关系。出处:《兰亭集序》"}]},{"id":101,"cat":"yiyi","src":"《谏太宗十思疏》","tokens":["傲","物","则","骨","肉","为","行","路"],"spots":[{"tok_idx":6,"all_idxs":[6,7],"word":"行路","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"路人;今义:走路","why":"古义:路人;今义:走路。出处:《谏太宗十思疏》"}]},{"id":102,"cat":"yiyi","src":"《答司马谏议书》","tokens":["于","反","覆","不","宜","卤","莽"],"spots":[{"tok_idx":1,"all_idxs":[1,2],"word":"反覆","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古义","modern":"","classical":"书信往返;今义:重复、反复","why":"古义:书信往返;今义:重复、反复。出处:《答司马谏议书》"}]},{"id":103,"cat":"jushi","src":"《师说》","tokens":["不","拘","于","时",",","学","于","余"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"于","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"被动句","modern":"","classical":"不被时俗拘束(于表被动)","why":"被动句:不被时俗拘束(于表被动)。出处:《师说》"}]},{"id":104,"cat":"jushi","src":"《赤壁赋》","tokens":["此","非","孟","德","之","困","于","周","郎","者","乎"],"spots":[{"tok_idx":6,"all_idxs":[6],"word":"于","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"被动句","modern":"","classical":"这不是曹操被周瑜围困的地方吗","why":"被动句:这不是曹操被周瑜围困的地方吗。出处:《赤壁赋》"}]},{"id":105,"cat":"jushi","src":"《五代史伶官传序》","tokens":["而","智","勇","多","困","于","所","溺"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"于","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"被动句","modern":"","classical":"智勇之人多被自己所溺爱的事物困扰","why":"被动句:智勇之人多被自己所溺爱的事物困扰。出处:《五代史伶官传序》"}]},{"id":106,"cat":"jushi","src":"《过秦论》","tokens":["身","死","人","手",",","为","天","下","笑","者"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"为","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"被动句","modern":"","classical":"被天下人耻笑","why":"被动句:被天下人耻笑。出处:《过秦论》"}]},{"id":107,"cat":"jushi","src":"《屈原列传》","tokens":["信","而","见","疑",",","忠","而","被","谤"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"见","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"被动句","modern":"","classical":"被怀疑、被诽谤","why":"被动句:被怀疑、被诽谤。出处:《屈原列传》"},{"tok_idx":7,"all_idxs":[7],"word":"被","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"被动句","modern":"","classical":"被怀疑、被诽谤","why":"被动句:被怀疑、被诽谤。出处:《屈原列传》"}]},{"id":108,"cat":"jushi","src":"《六国论》","tokens":["洎","牧","以","谗","诛"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"以","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"被动句","modern":"","classical":"李牧因谗言被杀","why":"被动句:李牧因谗言被杀。出处:《六国论》"}]},{"id":109,"cat":"jushi","src":"《师说》","tokens":["句","读","之","不","知",",","惑","之","不","解"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"之","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"宾语前置","modern":"","classical":"不知句读,不解惑(之为标志)","why":"宾语前置:不知句读,不解惑(之为标志)。出处:《师说》"}]},{"id":110,"cat":"jushi","src":"《鸿门宴》","tokens":["沛","公","安","在"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"安","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"宾语前置","modern":"","classical":"沛公在哪里(疑问代词作宾语前置)","why":"宾语前置:沛公在哪里(疑问代词作宾语前置)。出处:《鸿门宴》"}]},{"id":111,"cat":"jushi","src":"《鸿门宴》","tokens":["大","王","来","何","操"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"何","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"宾语前置","modern":"","classical":"大王来时拿什么(疑问代词作宾语前置)","why":"宾语前置:大王来时拿什么(疑问代词作宾语前置)。出处:《鸿门宴》"}]},{"id":112,"cat":"jushi","src":"《烛之武退秦师》","tokens":["夫","晋",",","何","厌","之","有"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"之","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"宾语前置","modern":"","classical":"晋国有什么满足的","why":"宾语前置:晋国有什么满足的。出处:《烛之武退秦师》"}]},{"id":113,"cat":"jushi","src":"《齐桓晋文之事》","tokens":["然","而","不","王","者",",","未","之","有","也"],"spots":[{"tok_idx":7,"all_idxs":[7],"word":"之","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"宾语前置","modern":"","classical":"未有之也(否定句中代词作宾语前置)","why":"宾语前置:未有之也(否定句中代词作宾语前置)。出处:《齐桓晋文之事》"}]},{"id":114,"cat":"jushi","src":"《劝学》","tokens":["青",",","取","之","于","蓝",",","而","青","于","蓝"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"于","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"于蓝取之、于蓝青","why":"状语后置:于蓝取之、于蓝青。出处:《劝学》"}]},{"id":115,"cat":"jushi","src":"《劝学》","tokens":["君","子","博","学","而","日","参","省","乎","己"],"spots":[{"tok_idx":8,"all_idxs":[8],"word":"乎","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"乎己参省(对自己检查反省)","why":"状语后置:乎己参省(对自己检查反省)。出处:《劝学》"}]},{"id":116,"cat":"jushi","src":"《烛之武退秦师》","tokens":["以","其","无","礼","于","晋"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"于","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"于晋无礼","why":"状语后置:于晋无礼。出处:《烛之武退秦师》"}]},{"id":117,"cat":"jushi","src":"《烛之武退秦师》","tokens":["佚","之","狐","言","于","郑","伯","曰"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"于","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"于郑伯言","why":"状语后置:于郑伯言。出处:《烛之武退秦师》"}]},{"id":118,"cat":"jushi","src":"《赤壁赋》","tokens":["飘","飘","乎","如","遗","世","独","立"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"乎","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"飘飘然","why":"状语后置(形容词后置):飘飘然。出处:《赤壁赋》"}]},{"id":119,"cat":"jushi","src":"《赤壁赋》","tokens":["苏","子","与","客","泛","舟","游","于","赤","壁","之","下"],"spots":[{"tok_idx":7,"all_idxs":[7],"word":"于","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"于赤壁之下泛舟游","why":"状语后置:于赤壁之下泛舟游。出处:《赤壁赋》"}]},{"id":120,"cat":"jushi","src":"《鸿门宴》","tokens":["具","告","以","事"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"以","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"以事具告","why":"状语后置:以事具告。出处:《鸿门宴》"}]},{"id":121,"cat":"jushi","src":"《鸿门宴》","tokens":["得","复","见","将","军","于","此"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"于","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"于此得复见将军","why":"状语后置:于此得复见将军。出处:《鸿门宴》"}]},{"id":122,"cat":"jushi","src":"《劝学》","tokens":["蚓","无","爪","牙","之","利",",","筋","骨","之","强"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"之","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"利之爪牙,强之筋骨","why":"定语后置:利之爪牙,强之筋骨。出处:《劝学》"}]},{"id":123,"cat":"jushi","src":"《赤壁赋》","tokens":["凌","万","顷","之","茫","然"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"之","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"茫然之万顷","why":"定语后置:茫然之万顷。出处:《赤壁赋》"}]},{"id":124,"cat":"jushi","src":"《阿房宫赋》","tokens":["奈","何","取","之","尽","锱","铢"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"奈何","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"固定句式","modern":"","classical":"为什么、怎么","why":"固定句式:为什么、怎么。出处:《阿房宫赋》"}]},{"id":125,"cat":"tongjia","src":"《劝学》","tokens":["虽","有","槁","暴",",","不","复","挺","者"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"有","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同又","why":"通假字:同又。出处:《劝学》"}]},{"id":126,"cat":"tongjia","src":"《劝学》","tokens":["輮","以","为","轮"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"輮","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同煣,用火烘烤使弯曲","why":"通假字:同煣,用火烘烤使弯曲。出处:《劝学》"}]},{"id":127,"cat":"tongjia","src":"《劝学》","tokens":["则","知","明","而","行","无","过","矣"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"知","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同智,智慧","why":"通假字:同智,智慧。出处:《劝学》"}]},{"id":128,"cat":"tongjia","src":"《劝学》","tokens":["君","子","生","非","异","也"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"生","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同性,本性、天性","why":"通假字:同性,本性、天性。出处:《劝学》"}]},{"id":129,"cat":"tongjia","src":"《师说》","tokens":["师","者",",","所","以","传","道","受","业","解","惑","也"],"spots":[{"tok_idx":7,"all_idxs":[7],"word":"受","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同授,传授","why":"通假字:同授,传授。出处:《师说》"}]},{"id":130,"cat":"tongjia","src":"《师说》","tokens":["或","师","焉",",","或","不","焉"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"不","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同否","why":"通假字:同否。出处:《师说》"}]},{"id":131,"cat":"tongjia","src":"《赤壁赋》","tokens":["浩","浩","乎","如","冯","虚","御","风"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"冯","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同凭,乘","why":"通假字:同凭,乘。出处:《赤壁赋》"}]},{"id":132,"cat":"tongjia","src":"《赤壁赋》","tokens":["山","川","相","缪"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"缪","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同缭,缠绕","why":"通假字:同缭,缠绕。出处:《赤壁赋》"}]},{"id":133,"cat":"tongjia","src":"《赤壁赋》","tokens":["举","酒","属","客"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"属","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同嘱,劝","why":"通假字:同嘱,劝。出处:《赤壁赋》"}]},{"id":134,"cat":"tongjia","src":"《登泰山记》","tokens":["须","臾","成","五","采"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"采","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同彩,色彩","why":"通假字:同彩,色彩。出处:《登泰山记》"}]},{"id":135,"cat":"tongjia","src":"《侍坐》","tokens":["鼓","瑟","希",",","铿","尔"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"希","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同稀,稀疏","why":"通假字:同稀,稀疏。出处:《侍坐》"}]},{"id":136,"cat":"tongjia","src":"《侍坐》","tokens":["莫","春","者",",","春","服","既","成"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"莫","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同暮,晚","why":"通假字:同暮,晚。出处:《侍坐》"}]},{"id":137,"cat":"tongjia","src":"《齐桓晋文之事》","tokens":["无","以",",","则","王","乎"],"spots":[{"tok_idx":0,"all_idxs":[0,1],"word":"无以","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同已,停止","why":"通假字:同已,停止。出处:《齐桓晋文之事》"}]},{"id":138,"cat":"tongjia","src":"《齐桓晋文之事》","tokens":["王","说",",","曰"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"说","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同悦,高兴","why":"通假字:同悦,高兴。出处:《齐桓晋文之事》"}]},{"id":139,"cat":"tongjia","src":"《齐桓晋文之事》","tokens":["为","长","者","折","枝"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"枝","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同肢,肢体","why":"通假字:同肢,肢体。出处:《齐桓晋文之事》"}]},{"id":140,"cat":"tongjia","src":"《齐桓晋文之事》","tokens":["刑","于","寡","妻"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"刑","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同型,作榜样","why":"通假字:同型,作榜样。出处:《齐桓晋文之事》"}]},{"id":141,"cat":"tongjia","src":"《齐桓晋文之事》","tokens":["盖","亦","反","其","本","矣"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"盖","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"盖同盍,何不;反同返","why":"通假字:盖同盍,何不;反同返。出处:《齐桓晋文之事》"},{"tok_idx":2,"all_idxs":[2],"word":"反","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"盖同盍,何不;反同返","why":"通假字:盖同盍,何不;反同返。出处:《齐桓晋文之事》"}]},{"id":142,"cat":"tongjia","src":"《齐桓晋文之事》","tokens":["颁","白","者","不","负","戴","于","道","路","矣"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"颁","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同斑,斑白","why":"通假字:同斑,斑白。出处:《齐桓晋文之事》"}]},{"id":143,"cat":"tongjia","src":"《齐桓晋文之事》","tokens":["行","旅","皆","欲","出","于","王","之","涂"],"spots":[{"tok_idx":8,"all_idxs":[8],"word":"涂","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同途,道路","why":"通假字:同途,道路。出处:《齐桓晋文之事》"}]},{"id":144,"cat":"tongjia","src":"《庖丁解牛》","tokens":["技","盖","至","此","乎"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"盖","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同盍,何、怎么","why":"通假字:同盍,何、怎么。出处:《庖丁解牛》"}]},{"id":145,"cat":"tongjia","src":"《庖丁解牛》","tokens":["砉","然","向","然"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"向","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同响,响声","why":"通假字:同响,响声。出处:《庖丁解牛》"}]},{"id":146,"cat":"tongjia","src":"《庖丁解牛》","tokens":["善","刀","而","藏","之"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"善","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同缮,擦拭","why":"通假字:同缮,擦拭。出处:《庖丁解牛》"}]},{"id":147,"cat":"tongjia","src":"《烛之武退秦师》","tokens":["行","李","之","往","来",",","共","其","乏","困"],"spots":[{"tok_idx":6,"all_idxs":[6],"word":"共","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同供,供给","why":"通假字:同供,供给。出处:《烛之武退秦师》"}]},{"id":148,"cat":"tongjia","src":"《烛之武退秦师》","tokens":["秦","伯","说",",","与","郑","人","盟"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"说","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同悦,高兴","why":"通假字:同悦,高兴。出处:《烛之武退秦师》"}]},{"id":149,"cat":"tongjia","src":"《烛之武退秦师》","tokens":["失","其","所","与",",","不","知"],"spots":[{"tok_idx":6,"all_idxs":[6],"word":"知","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同智,明智","why":"通假字:同智,明智。出处:《烛之武退秦师》"}]},{"id":150,"cat":"tongjia","src":"《鸿门宴》","tokens":["距","关",",","毋","内","诸","侯"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"距","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"距同拒;内同纳","why":"通假字:距同拒;内同纳。出处:《鸿门宴》"},{"tok_idx":4,"all_idxs":[4],"word":"内","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"距同拒;内同纳","why":"通假字:距同拒;内同纳。出处:《鸿门宴》"}]},{"id":151,"cat":"tongjia","src":"《鸿门宴》","tokens":["张","良","出",",","要","项","伯"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"要","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同邀,邀请","why":"通假字:同邀,邀请。出处:《鸿门宴》"}]},{"id":152,"cat":"tongjia","src":"《鸿门宴》","tokens":["愿","伯","具","言","臣","之","不","敢","倍","德","也"],"spots":[{"tok_idx":8,"all_idxs":[8],"word":"倍","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同背,背叛","why":"通假字:同背,背叛。出处:《鸿门宴》"}]},{"id":153,"cat":"tongjia","src":"《鸿门宴》","tokens":["旦","日","不","可","不","蚤","自","来","谢","项","王"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"蚤","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同早","why":"通假字:同早。出处:《鸿门宴》"}]},{"id":154,"cat":"tongjia","src":"《鸿门宴》","tokens":["令","将","军","与","臣","有","郤"],"spots":[{"tok_idx":6,"all_idxs":[6],"word":"郤","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同隙,隔阂","why":"通假字:同隙,隔阂。出处:《鸿门宴》"}]},{"id":155,"cat":"tongjia","src":"《鸿门宴》","tokens":["因","击","沛","公","于","坐"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"坐","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同座,座位","why":"通假字:同座,座位。出处:《鸿门宴》"}]},{"id":156,"cat":"tongjia","src":"《鸿门宴》","tokens":["私","见","张","良",",","具","告","以","事"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"具","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同俱,全部","why":"通假字:同俱,全部。出处:《鸿门宴》"}]},{"id":157,"cat":"tongjia","src":"《过秦论》","tokens":["赢","粮","而","景","从"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"景","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同影,像影子一样","why":"通假字:同影,像影子一样。出处:《过秦论》"}]},{"id":158,"cat":"tongjia","src":"《过秦论》","tokens":["合","从","缔","交",",","相","与","为","一"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"从","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同纵,合纵","why":"通假字:同纵,合纵。出处:《过秦论》"}]},{"id":159,"cat":"tongjia","src":"《过秦论》","tokens":["百","有","余","年","矣"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"有","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同又","why":"通假字:同又。出处:《过秦论》"}]},{"id":160,"cat":"tongjia","src":"《过秦论》","tokens":["信","臣","精","卒","陈","利","兵","而","谁","何"],"spots":[{"tok_idx":9,"all_idxs":[9],"word":"何","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同呵,呵问","why":"通假字:同呵,呵问。出处:《过秦论》"}]},{"id":161,"cat":"tongjia","src":"《屈原列传》","tokens":["被","发","行","吟","泽","畔"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"被","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同披,披散","why":"通假字:同披,披散。出处:《屈原列传》"}]},{"id":162,"cat":"tongjia","src":"《屈原列传》","tokens":["自","疏","濯","淖","污","泥","之","中"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"濯","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同浊,污浊","why":"通假字:同浊,污浊。出处:《屈原列传》"}]},{"id":163,"cat":"tongjia","src":"《屈原列传》","tokens":["屈","平","既","绌"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"绌","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同黜,被罢免","why":"通假字:同黜,被罢免。出处:《屈原列传》"}]},{"id":164,"cat":"tongjia","src":"《屈原列传》","tokens":["亡","走","赵",",","赵","不","内"],"spots":[{"tok_idx":6,"all_idxs":[6],"word":"内","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同纳,接纳","why":"通假字:同纳,接纳。出处:《屈原列传》"}]},{"id":165,"cat":"tongjia","src":"《屈原列传》","tokens":["齐","与","楚","从","亲"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"从","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同纵,合纵","why":"通假字:同纵,合纵。出处:《屈原列传》"}]},{"id":166,"cat":"tongjia","src":"《屈原列传》","tokens":["乃","令","张","仪","详","去","秦"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"详","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同佯,假装","why":"通假字:同佯,假装。出处:《屈原列传》"}]},{"id":167,"cat":"tongjia","src":"《苏武传》","tokens":["信","义","安","所","见","乎"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"见","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同现,显现","why":"通假字:同现,显现。出处:《苏武传》"}]},{"id":168,"cat":"tongjia","src":"《苏武传》","tokens":["与","旃","毛","并","咽","之"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"旃","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同毡,毛织品","why":"通假字:同毡,毛织品。出处:《苏武传》"}]},{"id":169,"cat":"tongjia","src":"《苏武传》","tokens":["掘","野","鼠","去","草","实","而","食","之"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"去","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同弆,收藏","why":"通假字:同弆,收藏。出处:《苏武传》"}]},{"id":170,"cat":"tongjia","src":"《苏武传》","tokens":["前","以","降","及","物","故"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"以","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同已,已经","why":"通假字:同已,已经。出处:《苏武传》"}]},{"id":171,"cat":"tongjia","src":"《勾践灭吴》","tokens":["当","室","者","死",",","三","年","释","其","政"],"spots":[{"tok_idx":9,"all_idxs":[9],"word":"政","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同征,赋税徭役","why":"通假字:同征,赋税徭役。出处:《勾践灭吴》"}]},{"id":172,"cat":"tongjia","src":"《烛之武退秦师》","tokens":["今","老","矣",",","无","能","为","也","已"],"spots":[{"tok_idx":8,"all_idxs":[8],"word":"已","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同矣,语气词","why":"通假字:同矣,语气词。出处:《烛之武退秦师》"}]},{"id":173,"cat":"tongjia","src":"《蜀道难》","tokens":["所","守","或","匪","亲"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"匪","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同非","why":"通假字:同非。出处:《蜀道难》"}]},{"id":174,"cat":"huoyong","src":"《齐桓晋文之事》","tokens":["老","吾","老",",","以","及","人","之","老"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"老","signal":"B1","signal_desc":"形容词后接名词性宾语或介宾(非代词)","type":"huoyong","subtype":"形容词作动词","modern":"","classical":"敬爱","why":"形容词作动词:敬爱。出处:《齐桓晋文之事》"}]},{"id":175,"cat":"huoyong","src":"《齐桓晋文之事》","tokens":["幼","吾","幼",",","以","及","人","之","幼"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"幼","signal":"B1","signal_desc":"形容词后接名词性宾语或介宾(非代词)","type":"huoyong","subtype":"形容词作动词","modern":"","classical":"爱护","why":"形容词作动词:爱护。出处:《齐桓晋文之事》"}]},{"id":176,"cat":"jushi","src":"《师说》","tokens":["道","之","所","存",",","师","之","所","存","也"],"spots":[{"tok_idx":9,"all_idxs":[9],"word":"……也","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"判断句","modern":"","classical":"道存在的地方,就是老师在的地方","why":"判断句:道存在的地方,就是老师在的地方。出处:《师说》"}]},{"id":177,"cat":"jushi","src":"《廉颇蔺相如列传》","tokens":["廉","颇","者",",","赵","之","良","将","也"],"spots":[{"tok_idx":2,"all_idxs":[2,8],"word":"……者……也","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"判断句","modern":"","classical":"廉颇是赵国的良将","why":"判断句:廉颇是赵国的良将。出处:《廉颇蔺相如列传》"}]},{"id":178,"cat":"jushi","src":"《岳阳楼记》","tokens":["此","则","岳","阳","楼","之","大","观","也"],"spots":[{"tok_idx":1,"all_idxs":[1,8],"word":"则……也","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"判断句","modern":"","classical":"这就是岳阳楼的雄伟景象啊","why":"判断句:这就是岳阳楼的雄伟景象啊。出处:《岳阳楼记》"}]},{"id":179,"cat":"jushi","src":"《鸿门宴》","tokens":["夺","项","王","天","下","者","必","沛","公","也"],"spots":[{"tok_idx":5,"all_idxs":[5,9],"word":"……者……也","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"判断句","modern":"","classical":"夺取项王天下的人一定是沛公","why":"判断句:夺取项王天下的人一定是沛公。出处:《鸿门宴》"}]},{"id":180,"cat":"jushi","src":"《鸿门宴》","tokens":["亚","父","者",",","范","增","也"],"spots":[{"tok_idx":2,"all_idxs":[2,6],"word":"……者……也","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"判断句","modern":"","classical":"亚父就是范增","why":"判断句:亚父就是范增。出处:《鸿门宴》"}]},{"id":181,"cat":"jushi","src":"《指南录后序》","tokens":["为","巡","船","所","物","色",",","几","从","鱼","腹","死"],"spots":[{"tok_idx":0,"all_idxs":[0,3],"word":"为……所","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"被动句","modern":"","classical":"被巡船搜寻","why":"被动句:被巡船搜寻。出处:《指南录后序》"}]},{"id":182,"cat":"jushi","src":"《齐桓晋文之事》","tokens":["宜","乎","百","姓","之","谓","我","爱","也"],"spots":[{"tok_idx":0,"all_idxs":[0,1,2,3,4,5,6,7,8],"word":"主谓倒装","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"主谓倒装","modern":"","classical":"百姓之谓我爱也宜乎","why":"主谓倒装:百姓之谓我爱也宜乎。出处:《齐桓晋文之事》"}]},{"id":183,"cat":"jushi","src":"《赤壁赋》","tokens":["客","有","吹","洞","箫","者"],"spots":[{"tok_idx":5,"all_idxs":[5],"word":"……者","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置/定语后置","modern":"","classical":"有吹洞箫的客人","why":"定语后置:有吹洞箫的客人。出处:《赤壁赋》"}]},{"id":184,"cat":"jushi","src":"《廉颇蔺相如列传》","tokens":["求","人","可","使","报","秦","者"],"spots":[{"tok_idx":6,"all_idxs":[6],"word":"……者","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置/定语后置","modern":"","classical":"可使报秦之人","why":"定语后置:可使报秦之人。出处:《廉颇蔺相如列传》"}]},{"id":185,"cat":"jushi","src":"《烛之武退秦师》","tokens":["以","其","无","礼","于","晋",",","且","贰","于","楚","也"],"spots":[{"tok_idx":0,"all_idxs":[0,1,2,3,4,5,6,7,8,9,10,11],"word":"省略主语","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"省略句","modern":"","classical":"省略主语郑国","why":"省略句:省略主语郑国。出处:《烛之武退秦师》"}]},{"id":186,"cat":"jushi","src":"《鸿门宴》","tokens":["为","击","破","沛","公","军"],"spots":[{"tok_idx":0,"all_idxs":[0,1,2,3,4,5],"word":"省略宾语","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"省略句","modern":"","classical":"为(我)击破(他们)","why":"省略句:为(我)击破(他们)。出处:《鸿门宴》"}]},{"id":187,"cat":"jushi","src":"《烛之武退秦师》","tokens":["晋","军","函","陵",",","秦","军","氾","南"],"spots":[{"tok_idx":0,"all_idxs":[0,1,2,3,4,5,6,7,8],"word":"省略介词","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"省略句","modern":"","classical":"省略介词于","why":"省略句:省略介词于。出处:《烛之武退秦师》"}]},{"id":188,"cat":"jushi","src":"《愚公移山》","tokens":["如","太","行","、","王","屋","何"],"spots":[{"tok_idx":0,"all_idxs":[0,6],"word":"如……何","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"固定句式","modern":"","classical":"把……怎么办","why":"固定句式:把……怎么办。出处:《愚公移山》"}]}],"ZHENTI":[{"id":"2025-x1-1","year":2025,"paper":"新高考I卷","source":"《说苑》(改编)","tokens":["今","鲁","君","老","悖",",","太","子","少","愚",",","愚","伪","日","起","。"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"悖","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义/重点实词","modern":"","classical":"糊涂、昏乱","why":"古今异义/重点实词:糊涂、昏乱"},{"tok_idx":13,"all_idxs":[13],"word":"日","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"名词作状语","modern":"","classical":"天天、每天","why":"名词作状语:天天、每天"}],"trans":"现在鲁国君主年老糊涂,太子年少无知,愚昧欺诈的事情天天发生。"},{"id":"2025-x1-2","year":2025,"paper":"新高考I卷","source":"《说苑》(改编)","tokens":["鲁","监","门","之","女","婴","相","从","绩",",","中","夜","而","泣","涕",",","其","偶","曰",":","何","谓","而","泣","也","?"],"spots":[{"tok_idx":10,"all_idxs":[10,11],"word":"中夜","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"半夜","why":"古今异义:半夜"},{"tok_idx":20,"all_idxs":[20,21],"word":"何谓","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"宾语前置","modern":"","classical":"为什么(谓何)","why":"宾语前置:为什么(谓何)"}],"trans":"鲁国监门的女儿婴随人一起绩麻,半夜哭泣起来,她同伴问她:为什么哭泣?"},{"id":"2025-x2-1","year":2025,"paper":"新高考II卷","source":"《晋书》","tokens":["温","恒","云","京","口","酒","可","饮",",","兵","可","用",",","深","不","欲","愔","居","之","。"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"恒","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"常常","why":"古今异义:常常"},{"tok_idx":13,"all_idxs":[13],"word":"深","signal":"A2","signal_desc":"名词出现在动词前,且不是主语","type":"huoyong","subtype":"形容词作状语","modern":"","classical":"深深地、非常","why":"形容词作状语:深深地、非常"}],"trans":"桓温常常说京口的酒可以喝,士兵可以任用,内心非常不希望郗愔留在那里。"},{"id":"2025-x2-2","year":2025,"paper":"新高考II卷","source":"《晋书》","tokens":["公","若","大","损","眠","食",",","可","呈","此","箱",",","不","尔","便","烧","之","。"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"若","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"虚词","modern":"","classical":"如果","why":"虚词:如果"},{"tok_idx":12,"all_idxs":[12,13],"word":"不尔","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"固定结构","modern":"","classical":"不是这样、否则","why":"固定结构:不是这样、否则"}],"trans":"如果父亲因悲痛而饮食睡眠大受影响,就把这箱文书给他看,否则就烧掉。"},{"id":"2024-x1-1","year":2024,"paper":"新高考I卷","source":"《资治通鉴》","tokens":["愿","得","自","当","一","队",",","到","兰","干","山","南","以","分","单","于","兵",",","毋","令","专","乡","贰","师","军","。"],"spots":[{"tok_idx":13,"all_idxs":[13],"word":"分","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……分散","why":"使动用法:使……分散"},{"tok_idx":21,"all_idxs":[21],"word":"乡","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同向,对着","why":"通假字:同向,对着"}],"trans":"希望能够独立带领一队,到兰干山南分散单于的兵力,不要让匈奴专门针对贰师将军的部队。"},{"id":"2024-x1-2","year":2024,"paper":"新高考I卷","source":"《资治通鉴》","tokens":["李","陵","曰","思","一","得","当","以","报","汉",",","愧","苏","武","而","为","之","辞","也","。","其","背","逆","也",",","固","非","迁","之","所","得","而","文","焉","者","也","。"],"spots":[{"tok_idx":5,"all_idxs":[5,6],"word":"得当","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"得到适当的机会","why":"古今异义:得到适当的机会"},{"tok_idx":11,"all_idxs":[11],"word":"愧","signal":"B1","signal_desc":"形容词后接名词性宾语或介宾(非代词)","type":"huoyong","subtype":"形容词作动词","modern":"","classical":"愧对","why":"形容词作动词:愧对"}],"trans":"李陵说想得到适当的机会来报答汉室,是愧对苏武而给这件事找借口。"},{"id":"2024-x2-1","year":2024,"paper":"新高考II卷","source":"《史记》","tokens":["吾","求","公","数","岁",",","公","辟","逃","我",",","今","公","何","自","从","吾","儿","游","乎","?"],"spots":[{"tok_idx":7,"all_idxs":[7],"word":"辟","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同避,躲避","why":"通假字:同避,躲避"},{"tok_idx":18,"all_idxs":[18],"word":"游","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"交往","why":"古今异义:交往"}],"trans":"我找你们好几年,你们躲着不见我,现在你们凭什么来跟我儿子交往呢?"},{"id":"2024-x2-2","year":2024,"paper":"新高考II卷","source":"《史记》","tokens":["却","军","还","众",",","不","犯","魏","境","者",",","贤","干","木","之","操",",","高","魏","文","之","礼","也","。"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"却","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……退却","why":"使动用法:使……退却"},{"tok_idx":15,"all_idxs":[15],"word":"操","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"操守、品行","why":"古今异义:操守、品行"},{"tok_idx":9,"all_idxs":[9],"word":"者……也","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"判断句标志","modern":"","classical":"","why":"判断句标志"}],"trans":"(秦国)退兵还师,不进犯魏国边境的原因,是看重段干木的操守,推崇魏文侯的重礼。"},{"id":"2024-jia-1","year":2024,"paper":"全国甲卷","source":"《廿二史札记》","tokens":["操","使","霸","出","二","人",",","霸","曰",":","霸","所","以","能","自","立","者",",","以","不","为","此","也","。"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"出","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……交出","why":"使动用法:使……交出"},{"tok_idx":11,"all_idxs":[11],"word":"所以……者,以……也","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"判断句","modern":"","classical":"……的原因,是因为……","why":"判断句:……的原因,是因为……"}],"trans":"曹操让臧霸交出那两个人,臧霸说:我之所以能够自立的原因,是因为不做这样的事情。"},{"id":"2024-jia-2","year":2024,"paper":"全国甲卷","source":"《廿二史札记》","tokens":["吾","前","听","谗","言",",","与","汝","父","大","义","不","笃",",","以","此","负","汝","。"],"spots":[{"tok_idx":7,"all_idxs":[7],"word":"汝","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义/人称代词","modern":"","classical":"你","why":"古今异义/人称代词:你"},{"tok_idx":12,"all_idxs":[12],"word":"笃","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"深厚","why":"重点实词:深厚"},{"tok_idx":16,"all_idxs":[16],"word":"负","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"辜负","why":"重点实词:辜负"}],"trans":"我以前听信谗言,与令尊的关系不够深厚,因此辜负了你。"},{"id":"2023-x1-1","year":2023,"paper":"新高考I卷","source":"《韩非子》","tokens":["吾","群","臣","无","有","不","骄","侮","之","意","者",",","唯","赫","子","不","失","君","臣","之","礼",",","是","以","先","之","。"],"spots":[{"tok_idx":6,"all_idxs":[6,7],"word":"骄侮","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"骄傲轻慢","why":"古今异义:骄傲轻慢"},{"tok_idx":24,"all_idxs":[24],"word":"先","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"把……放在前面","why":"名词作动词:把……放在前面"},{"tok_idx":22,"all_idxs":[22,23],"word":"是以","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"宾语前置","modern":"","classical":"以是,因此","why":"宾语前置:以是,因此"}],"trans":"我的群臣没有不对我有骄傲轻慢之意的,只有高赫没有失去君臣之间的礼节,因此把他放在前面。"},{"id":"2023-x1-2","year":2023,"paper":"新高考I卷","source":"《韩非子》","tokens":["请","略","说","一","隅",",","而","君","子","审","其","信","否","焉","。"],"spots":[{"tok_idx":0,"all_idxs":[0],"word":"请","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"请允许我","why":"古今异义:请允许我"},{"tok_idx":9,"all_idxs":[9],"word":"审","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"细察","why":"重点实词:细察"}],"trans":"请允许我大体说说一隅之见,先生您细察一下它是否真实(可信)。"},{"id":"2023-x2-1","year":2023,"paper":"新高考II卷","source":"《百战奇略》","tokens":["请","君","少","却",",","令","将","士","得","周","旋",",","仆","与","诸","君","缓","辔","而","观","之",",","不","亦","乐","乎","!"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"却","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"后退","why":"重点实词:后退"},{"tok_idx":8,"all_idxs":[8],"word":"得","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"得以、能够","why":"重点实词:得以、能够"},{"tok_idx":22,"all_idxs":[22],"word":"不亦……乎","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"固定句式","modern":"","classical":"不是……吗","why":"固定句式:不是……吗"}],"trans":"请你稍微后退,让将士们得以展开战斗,我与各位骑马慢行观战,不是很愉快吗?"},{"id":"2023-x2-2","year":2023,"paper":"新高考II卷","source":"《百战奇略》","tokens":["古","人","临","阵","出","奇",",","攻","人","不","意",",","斯","亦","相","变","之","法","乎","?"],"spots":[{"tok_idx":4,"all_idxs":[4,5],"word":"出奇","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"动词作动词","modern":"","classical":"出奇兵","why":"动词作动词:出奇兵"},{"tok_idx":12,"all_idxs":[12],"word":"斯","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"这","why":"古今异义:这"}],"trans":"古人临阵出奇兵,攻击敌人意想不到之处,这是变化的方法吗?"},{"id":"2023-jia-1","year":2023,"paper":"全国甲卷","source":"《隆平集》","tokens":["泫","然","流","涕","曰",":","过","是",",","虽","欲","竭","力",",","复","可","得","乎","?"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"涕","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"眼泪","why":"古今异义:眼泪"},{"tok_idx":7,"all_idxs":[7],"word":"是","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"这(指今天)","why":"古今异义:这(指今天)"},{"tok_idx":9,"all_idxs":[9],"word":"虽","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"即使","why":"古今异义:即使"}],"trans":"他泪流满面地回答说:过了今天,即使以后我想要像现在这样竭尽全力,还能有机会吗?"},{"id":"2023-jia-2","year":2023,"paper":"全国甲卷","source":"《隆平集》","tokens":["纭","至","邑",",","不","复","他","察",",","第","以","所","闻","荐","之","。"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"邑","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"县","why":"重点实词:县"},{"tok_idx":9,"all_idxs":[9],"word":"第","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"只是","why":"古今异义:只是"},{"tok_idx":10,"all_idxs":[10],"word":"以","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"虚词","modern":"","classical":"凭借、把","why":"虚词:凭借、把"}],"trans":"杨纭到达县里后,不再另行访查,只是将听到的情况上报来推荐他。"},{"id":"2023-yi-1","year":2023,"paper":"全国乙卷","source":"《说苑》","tokens":["此","若","反","国",",","必","诛","无","礼",",","则","曹","其","首","也","。"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"若","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义/代词","modern":"","classical":"如果(一说他)","why":"古今异义/代词:如果(一说他)"},{"tok_idx":2,"all_idxs":[2],"word":"反","signal":"F","signal_desc":"字代入本义讲不通,需找音近本字","type":"tongjia","subtype":"通假字","modern":"","classical":"同返,返回","why":"通假字:同返,返回"},{"tok_idx":13,"all_idxs":[13],"word":"首","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词/数词作名词","modern":"","classical":"第一个","why":"名词作动词/数词作名词:第一个"}],"trans":"他如果返回祖国,必会声讨对他无礼的人,那曹就是第一个了。"},{"id":"2023-yi-2","year":2023,"paper":"全国乙卷","source":"《说苑》","tokens":["盛","黄","金","于","壶",",","充","之","以","餐",",","加","璧","其","上",",","夜","令","人","遗","公","子","。"],"spots":[{"tok_idx":0,"all_idxs":[0,1,2,3,4],"word":"盛黄金于壶","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"于壶盛黄金","why":"状语后置:于壶盛黄金"},{"tok_idx":11,"all_idxs":[11,12,13,14],"word":"加璧其上","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"省略句","modern":"","classical":"加璧(于)其上","why":"省略句:加璧(于)其上"},{"tok_idx":19,"all_idxs":[19],"word":"遗","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"送给","why":"重点实词:送给"}],"trans":"就在壶里盛上黄金,用饭把它装满,用璧盖上,晚上派人送给晋公子。"},{"id":"2022-x1-1","year":2022,"paper":"新高考I卷","source":"《战国策》","tokens":["吾","岁","不","熟","二","年","矣",",","今","又","行","数","千","里","而","以","助","魏",",","且","奈","何","?"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"岁","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"年成、收成","why":"古今异义:年成、收成"},{"tok_idx":20,"all_idxs":[20,21],"word":"奈何","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"固定句式","modern":"","classical":"怎么办","why":"固定句式:怎么办"}],"trans":"我国连续两年收成不好,现在又要跋涉几千里去援助魏国,这将怎么办呢?"},{"id":"2022-x1-2","year":2022,"paper":"新高考I卷","source":"《战国策》","tokens":["燕","不","救","魏",",","魏","王","折","节","割","地",",","以","国","之","半","与","秦",",","秦","必","去","矣","。"],"spots":[{"tok_idx":7,"all_idxs":[7,8],"word":"折节","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"屈服、降低身份","why":"古今异义:屈服、降低身份"},{"tok_idx":12,"all_idxs":[12],"word":"以","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"虚词","modern":"","classical":"把、拿","why":"虚词:把、拿"},{"tok_idx":21,"all_idxs":[21],"word":"去","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"撤离、离开","why":"古今异义:撤离、离开"}],"trans":"燕国不救援魏国,魏王屈服降低身份割让土地,把国家的一半送给秦国,秦国必定会撤离了。"},{"id":"2022-x2-1","year":2022,"paper":"新高考II卷","source":"《东观汉记》","tokens":["禹","曰",":","吴","汉","可","。","禹","数","与","语",",","其","人","勇","鸷","有","智","谋",",","诸","将","鲜","能","及","者","。"],"spots":[{"tok_idx":8,"all_idxs":[8],"word":"数","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"多次","why":"古今异义:多次"},{"tok_idx":14,"all_idxs":[14,15],"word":"勇鸷","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"勇猛凶悍","why":"重点实词:勇猛凶悍"},{"tok_idx":22,"all_idxs":[22],"word":"鲜","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"很少","why":"古今异义:很少"}],"trans":"邓禹说:吴汉可以(担任大将军)。我多次和他交谈,这个人勇猛凶悍而且有智谋,众将领中很少有能赶得上他的。"},{"id":"2022-x2-2","year":2022,"paper":"新高考II卷","source":"《东观汉记》","tokens":["汉","还",",","让","之","曰",":","军","师","在","外",",","吏","士","不","足",",","何","多","买","田","宅","乎","?"],"spots":[{"tok_idx":3,"all_idxs":[3],"word":"让","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义/重点实词","modern":"","classical":"责备","why":"古今异义/重点实词:责备"},{"tok_idx":17,"all_idxs":[17],"word":"何……乎","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"固定句式","modern":"","classical":"为什么……呢","why":"固定句式:为什么……呢"}],"trans":"吴汉回来,责备他们说:军队出征在外,官兵们用度不足,为什么多买田地房产呢?"},{"id":"2022-jia-1","year":2022,"paper":"全国甲卷","source":"《战国策》","tokens":["楚","王","不","听",",","曰",":","吾","事","善","矣","!","子","其","弭","口","无","言",",","以","待","吾","事","。"],"spots":[{"tok_idx":14,"all_idxs":[14],"word":"弭","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"停止、闭","why":"重点实词:停止、闭"},{"tok_idx":13,"all_idxs":[13],"word":"其","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"虚词","modern":"","classical":"表祈使,可译为还是","why":"虚词:表祈使,可译为还是"}],"trans":"楚王不听从,说:我的计划已经妥当了,你就闭口不要多说,就等待看我(得到割地)吧。"},{"id":"2022-jia-2","year":2022,"paper":"全国甲卷","source":"《战国策》","tokens":["张","仪","知","楚","绝","齐","也",",","乃","出","见","使","者","曰",":","从","某","至","某",",","广","从","六","里","。"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"绝","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"断绝(关系)","why":"重点实词:断绝(关系)"},{"tok_idx":20,"all_idxs":[20,21],"word":"广从","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"纵横、面积","why":"古今异义:纵横、面积"}],"trans":"张仪在证实楚齐确实断交以后,才出来接见楚国的索土使臣说:是这里到那里,纵横总共是六里土地。"},{"id":"2022-yi-1","year":2022,"paper":"全国乙卷","source":"《说苑》","tokens":["武","王","克","殷",",","召","太","公","而","问","曰",":","将","奈","其","士","众","何","?"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"克","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"战胜","why":"重点实词:战胜"},{"tok_idx":13,"all_idxs":[13],"word":"奈……何","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"固定句式","modern":"","classical":"如何对待……、把……怎么办","why":"固定句式:如何对待……、把……怎么办"}],"trans":"武王战胜了殷商,召见太公而问道:将如何对待他们的官员和民众呢?"},{"id":"2022-yi-2","year":2022,"paper":"全国乙卷","source":"《说苑》","tokens":["今","请","求","老","弱","之","不","养",",","鳏","寡","之","不","室","者",",","论","而","供","秩","焉","。"],"spots":[{"tok_idx":12,"all_idxs":[12,13],"word":"不室","signal":"A1","signal_desc":"名词后接名词宾语,前者无修饰义","type":"huoyong","subtype":"名词作动词","modern":"","classical":"没有成家","why":"名词作动词:没有成家"},{"tok_idx":16,"all_idxs":[16],"word":"论","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"评定","why":"重点实词:评定"},{"tok_idx":3,"all_idxs":[3,4,5,6,7],"word":"老弱之不养","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"定语后置","modern":"","classical":"不养之老弱","why":"定语后置:不养之老弱"}],"trans":"现在请让我寻找老弱而无人供养的人,孤苦而没有成家的人,评定后供给用度。"},{"id":"2021-x1-1","year":2021,"paper":"新高考I卷","source":"《通鉴纪事本末》","tokens":["上","患","吏","多","受","赇",",","密","使","左","右","试","赂","之","。"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"患","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词/意动","modern":"","classical":"以……为患、担心","why":"重点实词/意动:以……为患、担心"},{"tok_idx":5,"all_idxs":[5],"word":"赇","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"贿赂","why":"重点实词:贿赂"}],"trans":"皇上担心官吏中多有接受贿赂的,暗地里派身边的人试着贿赂他们。"},{"id":"2021-x1-2","year":2021,"paper":"新高考I卷","source":"《通鉴纪事本末》","tokens":["君","恶","闻","其","过","则","忠","化","为","佞",",","君","乐","闻","直","言","则","佞","化","为","忠","。"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"恶","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"厌恶","why":"重点实词:厌恶"},{"tok_idx":4,"all_idxs":[4],"word":"过","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"过错","why":"古今异义:过错"},{"tok_idx":9,"all_idxs":[9],"word":"佞","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"奸佞","why":"重点实词:奸佞"}],"trans":"君主厌恶听到自己的过错,那么忠诚就会变为奸佞;君主乐于听到正直的言论,那么奸佞就会变为忠诚。"},{"id":"2021-x2-1","year":2021,"paper":"新高考II卷","source":"《通鉴纪事本末》","tokens":["逖","不","报","书",",","而","听","其","互","市",",","收","利","十","倍","。"],"spots":[{"tok_idx":2,"all_idxs":[2],"word":"报","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"回复、答复","why":"古今异义:回复、答复"},{"tok_idx":6,"all_idxs":[6],"word":"听","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"听任、任凭","why":"古今异义:听任、任凭"},{"tok_idx":8,"all_idxs":[8,9],"word":"互市","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"民间贸易","why":"古今异义:民间贸易"}],"trans":"祖逖没有回信,但听任双方民间互相贸易,收取了十倍的利益。"},{"id":"2021-x2-2","year":2021,"paper":"新高考II卷","source":"《通鉴纪事本末》","tokens":["知","大","功","不","遂",",","感","激","发","病","。"],"spots":[{"tok_idx":4,"all_idxs":[4],"word":"遂","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"成功、达成","why":"古今异义:成功、达成"},{"tok_idx":6,"all_idxs":[6,7],"word":"感激","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"感慨激动","why":"古今异义:感慨激动"}],"trans":"祖逖知道大功不能告成,情绪激动以致重病。"},{"id":"2021-jia-1","year":2021,"paper":"全国甲卷","source":"《宋史》","tokens":["每","纵","游","骑","剽","掠",",","小","不","利","辄","引","去",",","徜","徉","无","斗","志","。"],"spots":[{"tok_idx":1,"all_idxs":[1],"word":"纵","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"放纵、纵使","why":"重点实词:放纵、纵使"},{"tok_idx":7,"all_idxs":[7],"word":"小","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"稍微","why":"古今异义:稍微"},{"tok_idx":10,"all_idxs":[10],"word":"辄","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"虚词","modern":"","classical":"就、总是","why":"虚词:就、总是"},{"tok_idx":14,"all_idxs":[14,15],"word":"徜徉","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"徘徊游荡","why":"重点实词:徘徊游荡"}],"trans":"常常放纵游骑剽掠抢夺,稍有不利就退去,徘徊犹疑没有斗志。"},{"id":"2021-jia-2","year":2021,"paper":"全国甲卷","source":"《宋史》","tokens":["若","欲","货","财",",","汉","以","玉","帛","赐","单","于",",","有","故","事",",","宜","许","之","。"],"spots":[{"tok_idx":14,"all_idxs":[14,15],"word":"故事","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"古今异义","modern":"","classical":"先例、旧例","why":"古今异义:先例、旧例"},{"tok_idx":17,"all_idxs":[17],"word":"宜","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"应当","why":"重点实词:应当"},{"tok_idx":18,"all_idxs":[18],"word":"许","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"答应","why":"重点实词:答应"}],"trans":"如果想要获得钱财,汉朝也曾拿玉帛赐给单于,有此旧例,应该答应他们。"},{"id":"2021-yi-1","year":2021,"paper":"全国乙卷","source":"《通鉴纪事本末》","tokens":["而","既","知","其","不","可",",","复","断","之","以","法",",","此","乃","忍","小","忿","而","存","大","信","也","。"],"spots":[{"tok_idx":8,"all_idxs":[8,9,10,11],"word":"断之以法","signal":"G","signal_desc":"判断句/被动/倒装/省略等结构标志","type":"jushi","subtype":"状语后置","modern":"","classical":"以法断之","why":"状语后置:以法断之"},{"tok_idx":14,"all_idxs":[14],"word":"乃","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"虚词/判断","modern":"","classical":"正是、就是","why":"虚词/判断:正是、就是"},{"tok_idx":17,"all_idxs":[17],"word":"忿","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"愤怒","why":"重点实词:愤怒"}],"trans":"然而既然已经知道不可以这样,再依法裁决,这正是忍耐小的愤怒保全了大的信用啊。"},{"id":"2021-yi-2","year":2021,"paper":"全国乙卷","source":"《通鉴纪事本末》","tokens":["皆","令","门","下","覆","视",",","有","据","法","当","死","而","情","可","矜","者",",","录","状","以","闻","。"],"spots":[{"tok_idx":4,"all_idxs":[4,5],"word":"覆视","signal":"D1","signal_desc":"看着像现代词的双字组合,代入现代义不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"复核查验","why":"重点实词:复核查验"},{"tok_idx":15,"all_idxs":[15],"word":"矜","signal":"D2","signal_desc":"单字在语境中代入现代义讲不通","type":"yiyi","subtype":"重点实词","modern":"","classical":"怜悯","why":"重点实词:怜悯"},{"tok_idx":21,"all_idxs":[21],"word":"闻","signal":"C1","signal_desc":"通常不带宾语的动词后突然带了宾语","type":"huoyong","subtype":"使动用法","modern":"","classical":"使……听闻、上报","why":"使动用法:使……听闻、上报"}],"trans":"(这些规定)都由门下省复核查验,有依据法令应当处死而情理上又值得怜悯的人,记下情况上报朝廷。"}],"SIGNALS":{"A1":{"name":"A① 名词连用作动词","desc":"两个名词连用,前者无修饰义","hint":"→ 名作动","type":"huoyong"},"A2":{"name":"A② 名在动前作状语","desc":"名词在动词前,且不是主语","hint":"→ 名作状","type":"huoyong"},"B1":{"name":"B① 形带名宾作动词","desc":"形容词后接名词性宾语或介宾(非代词)","hint":"→ 形作动","type":"huoyong"},"B2":{"name":"B② 形居宾位作名词","desc":"形容词处于动词后/介词后的宾语位置","hint":"→ 形作名","type":"huoyong"},"C1":{"name":"C① 不及物带宾语使动","desc":"通常不带宾语的动词突然带了宾语","hint":"→ 使动","type":"huoyong"},"C2":{"name":"C② 名/形带代词小心意动","desc":"名词/形容词后跟代词宾语(之/我/汝/其+N)","hint":"→ 意动","type":"huoyong"},"D1":{"name":"D① 双字异义要拆字","desc":"看着像现代词的双字组合,代入不通","hint":"→ 古今异义","type":"yiyi"},"D2":{"name":"D② 单字异义多积累","desc":"单字代入现代义讲不通","hint":"→ 古今异义","type":"yiyi"},"G":{"name":"G  特殊句式","desc":"判断/被动/倒装/省略等结构标志","hint":"→ 句式","type":"jushi"},"F":{"name":"F  字义不通想通假","desc":"字代入本义讲不通,需找音近本字","hint":"→ 通假","type":"tongjia"}}};
+// ===== Globals =====
+const SCAN = DATA.SCAN;
+const BASIC = DATA.BASIC;
+const ZHENTI = DATA.ZHENTI;
+const SIGNALS = DATA.SIGNALS;
+
+const TYPE_NAMES = {
+  huoyong: '词类活用',
+  yiyi: '古今异义',
+  tongjia: '通假',
+  jushi: '特殊句式'
+};
+const TYPE_COLORS = {
+  huoyong: 'var(--c-huoyong)',
+  yiyi: 'var(--c-yiyi)',
+  tongjia: 'var(--c-tongjia)',
+  jushi: 'var(--c-jushi)'
+};
+
+// 训练模式: scan / basic / zhenti
+// drill 状态
+const state = {
+  page: 'home',
+  mode: null,           // scan/basic/zhenti
+  bucketKey: null,      // scan-1/scan-2/scan-3/basic-huoyong/.../zhenti-2024
+  qList: [],            // 当前题列表
+  qIdx: 0,              // 当前题索引
+  step: 1,              // 1=圈词 2=信号 3=验证 (基础+扫雷); 1=圈词 2=信号 3=翻译 4=验证 (真题)
+  picks: [],            // 当前题圈出的 tok_idx 列表
+  signals: {},          // {tok_idx: signal_code}
+  signalActiveSpot: null, // 当前正在指认信号的 tok_idx
+  userTrans: '',        // 用户翻译(真题模式)
+  // 持久化
+  blindSpots: {},       // {signal: {miss, total}}
+  done: {},             // {bucketKey: [qid,...]}
+  lastIdx: {}           // {bucketKey: qIdx} 上次进度
+};
+
+// ===== Persistence =====
+try {
+  const s = JSON.parse(localStorage.getItem('weiyan_v4') || '{}');
+  if (s.blindSpots) state.blindSpots = s.blindSpots;
+  if (s.done) state.done = s.done;
+  if (s.lastIdx) state.lastIdx = s.lastIdx;
+} catch(e) {}
+
+function saveState() {
+  try {
+    localStorage.setItem('weiyan_v4', JSON.stringify({
+      blindSpots: state.blindSpots,
+      done: state.done,
+      lastIdx: state.lastIdx
+    }));
+  } catch(e) {}
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1400);
+}
+
+// ===== NAV =====
+function navTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.page === page);
+  });
+  state.page = page;
+  window.scrollTo(0, 0);
+
+  if (page === 'home') renderHome();
+  else if (page === 'quanju') renderQuanju();
+  else if (page === 'signals') renderSignalRef();
+  else if (page === 'stats') renderStats();
+}
+
+document.querySelectorAll('.tab-item').forEach(el => {
+  el.addEventListener('click', () => navTo(el.dataset.page));
+});
+
+document.querySelectorAll('.sub-tab').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.sub-tab').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    const target = el.dataset.subtab;
+    document.getElementById('subpage-basic').style.display = target === 'basic' ? 'block' : 'none';
+    document.getElementById('subpage-zhenti').style.display = target === 'zhenti' ? 'block' : 'none';
+  });
+});
+
+// ===== HOME (位置扫雷) =====
+function renderHome() {
+  for (let lv = 1; lv <= 3; lv++) {
+    const total = SCAN.filter(q => q.level === lv).length;
+    const key = 'scan-' + lv;
+    const done = (state.done[key] || []).length;
+    document.getElementById(`scan-${lv}-count`).textContent = `${total} 题`;
+    document.getElementById(`scan-${lv}-progress`).textContent =
+      done === 0 ? '未开始' : (done >= total ? '已完成' : `${done}/${total}`);
+    document.getElementById(`scan-${lv}-pct`).textContent = done >= total ? '✓' : '→';
+  }
+}
+
+// ===== QUANJU (全句翻译) =====
+function renderQuanju() {
+  // 基础训练计数
+  ['huoyong', 'yiyi', 'jushi', 'tongjia'].forEach(cat => {
+    const total = BASIC.filter(q => q.cat === cat).length;
+    const key = 'basic-' + cat;
+    const done = (state.done[key] || []).length;
+    document.getElementById(`basic-${cat}-count`).textContent = `${total} 题`;
+    document.getElementById(`basic-${cat}-progress`).textContent =
+      done === 0 ? '未开始' : (done >= total ? '已完成' : `${done}/${total}`);
+    document.getElementById(`basic-${cat}-pct`).textContent = done >= total ? '✓' : '→';
+  });
+
+  // 真题列表(按年份分组)
+  const years = [...new Set(ZHENTI.map(q => q.year))].sort((a, b) => b - a);
+  const list = document.getElementById('zhenti-list');
+  list.innerHTML = years.map(y => {
+    const qs = ZHENTI.filter(q => q.year === y);
+    const key = 'zhenti-' + y;
+    const done = (state.done[key] || []).length;
+    return `
+      <div class="level-card" data-cat="zhenti" onclick="startZhenti(${y})">
+        <div class="lv-num">'${(y % 100).toString().padStart(2, '0')}</div>
+        <div class="lv-info">
+          <div class="lv-title">${y} 年真题</div>
+          <div class="lv-desc">${[...new Set(qs.map(q => q.paper))].join(' · ')}</div>
+          <div class="lv-meta"><span class="dot"></span><span>${qs.length} 题</span><span>·</span><span>${done === 0 ? '未开始' : (done >= qs.length ? '已完成' : done + '/' + qs.length)}</span></div>
+        </div>
+        <div class="lv-progress">${done >= qs.length ? '✓' : '→'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ===== START DRILLS =====
+function startScan(lv) {
+  state.mode = 'scan';
+  state.bucketKey = 'scan-' + lv;
+  state.qList = SCAN.filter(q => q.level === lv);
+  state.qIdx = state.lastIdx[state.bucketKey] || 0;
+  if (state.qIdx >= state.qList.length) state.qIdx = 0;
+  document.getElementById('drill-title-h2').textContent =
+    {1: '易级 · 位置扫雷', 2: '中级 · 位置扫雷', 3: '难级 · 位置扫雷'}[lv];
+  navTo('drill');
+  loadQ();
+}
+
+function startBasic(cat) {
+  state.mode = 'basic';
+  state.bucketKey = 'basic-' + cat;
+  state.qList = BASIC.filter(q => q.cat === cat);
+  state.qIdx = state.lastIdx[state.bucketKey] || 0;
+  if (state.qIdx >= state.qList.length) state.qIdx = 0;
+  document.getElementById('drill-title-h2').textContent =
+    {huoyong: '词类活用·基础', yiyi: '古今异义·基础', jushi: '特殊句式·基础', tongjia: '通假·基础'}[cat];
+  navTo('drill');
+  loadQ();
+}
+
+function startZhenti(year) {
+  state.mode = 'zhenti';
+  state.bucketKey = 'zhenti-' + year;
+  state.qList = ZHENTI.filter(q => q.year === year);
+  state.qIdx = state.lastIdx[state.bucketKey] || 0;
+  if (state.qIdx >= state.qList.length) state.qIdx = 0;
+  document.getElementById('drill-title-h2').textContent = year + ' 真题试炼';
+  navTo('drill');
+  loadQ();
+}
+
+function exitDrill() {
+  // 回到对应的入口页
+  if (state.mode === 'scan') navTo('home');
+  else navTo('quanju');
+}
+
+function loadQ() {
+  state.step = 1;
+  state.picks = [];
+  state.signals = {};
+  state.signalActiveSpot = null;
+  state.userTrans = '';
+  state.lastIdx[state.bucketKey] = state.qIdx;
+  saveState();
+
+  const q = state.qList[state.qIdx];
+  const srcText = q.src || (q.year ? `${q.year}·${q.paper || ''}` : '');
+  document.getElementById('drill-src').textContent = srcText;
+  document.getElementById('drill-progress').textContent = `${state.qIdx + 1} / ${state.qList.length}`;
+  renderStepBar();
+  renderStep();
+}
+
+function renderStepBar() {
+  const sb = document.getElementById('step-bar');
+  let steps;
+  if (state.mode === 'zhenti') {
+    steps = [
+      {n: '①', label: '圈词'},
+      {n: '②', label: '信号'},
+      {n: '③', label: '翻译'},
+      {n: '④', label: '验证'}
+    ];
+  } else {
+    steps = [
+      {n: '①', label: '圈词'},
+      {n: '②', label: '信号'},
+      {n: '③', label: '验证'}
+    ];
+  }
+  sb.innerHTML = steps.map((s, i) => {
+    const idx = i + 1;
+    let cls = 'step-pill';
+    if (idx < state.step) cls += ' done';
+    else if (idx === state.step) cls += ' active';
+    return `<div class="${cls}"><span class="num">${s.n}</span> ${s.label}</div>`;
+  }).join('');
+}
+
+// ===== STEP 1: 圈词 =====
+function renderStep() {
+  renderStepBar();
+  if (state.step === 1) renderStep1();
+  else if (state.step === 2) renderStep2();
+  else if (state.step === 3) {
+    if (state.mode === 'zhenti') renderStep3Trans();
+    else renderStep3Verify();
+  }
+  else if (state.step === 4) renderStep4Verify();
+}
+
+function getSentenceHTML(q, getCls) {
+  return q.tokens.map((t, i) => {
+    if (/^[,。;:、!?,.;:!？！]+$/.test(t)) {
+      return `<span class="ch punct">${t}</span>`;
+    }
+    const cls = getCls(i);
+    return `<span class="${cls}" data-i="${i}" onclick="onCharClick(${i})">${t}</span>`;
+  }).join('');
+}
+
+function renderStep1() {
+  const q = state.qList[state.qIdx];
+  const body = document.getElementById('drill-body');
+  const src = q.src || `${q.year || ''} ${q.paper || ''}`;
+
+  body.innerHTML = `
+    <div class="sentence-card">
+      <span class="src-tag">${src}</span>
+      <div class="sentence-cn" id="sent">
+        ${getSentenceHTML(q, i => state.picks.includes(i) ? 'ch suspect' : 'ch')}
+      </div>
+    </div>
+    <div class="hint">点击你认为有问题的字/词,可圈多个</div>
+    <div class="pick-summary" id="pick-summary">
+      ${renderPickSummary()}
+    </div>
+  `;
+  document.getElementById('drill-actions').innerHTML = `
+    <button class="btn ghost" onclick="prevQ()" ${state.qIdx === 0 ? 'disabled' : ''}>上一题</button>
+    <button class="btn primary" onclick="goStep2()" ${state.picks.length === 0 ? 'disabled' : ''}>下一步 →</button>
+  `;
+}
+
+function onCharClick(i) {
+  if (state.step === 1) togglePick(i);
+  else if (state.step === 2) {
+    if (state.picks.includes(i)) setActiveSpot(i);
+  }
+}
+
+function renderPickSummary() {
+  if (state.picks.length === 0) {
+    return '<span class="empty">还没圈出可疑词</span>';
+  }
+  const q = state.qList[state.qIdx];
+  return state.picks.map(i =>
+    `<span class="pick-tag" onclick="togglePick(${i})">${q.tokens[i]}</span>`
+  ).join('');
+}
+
+function togglePick(i) {
+  if (state.step !== 1) return;
+  const idx = state.picks.indexOf(i);
+  if (idx >= 0) state.picks.splice(idx, 1);
+  else state.picks.push(i);
+  renderStep1();
+}
+
+function goStep2() {
+  state.step = 2;
+  state.signalActiveSpot = state.picks[0];
+  renderStep();
+}
+
+// ===== STEP 2: 选信号 =====
+function renderStep2() {
+  const q = state.qList[state.qIdx];
+  const body = document.getElementById('drill-body');
+  const currentWord = q.tokens[state.signalActiveSpot];
+
+  const sigOptions = Object.entries(SIGNALS).map(([code, info]) => {
+    const selected = state.signals[state.signalActiveSpot] === code;
+    return `
+      <div class="signal-card ${selected ? 'selected' : ''}" onclick="pickSignal('${code}')">
+        <div class="sig-name">${info.name}</div>
+        <div class="sig-desc">${info.desc}</div>
+        <div class="sig-hint">${info.hint}</div>
+      </div>
+    `;
+  }).join('');
+
+  const allDone = state.picks.every(i => state.signals[i]);
+
+  body.innerHTML = `
+    <div class="sentence-card">
+      <div class="sentence-cn">
+        ${getSentenceHTML(q, i => {
+          if (!state.picks.includes(i)) return 'ch';
+          if (i === state.signalActiveSpot) return 'ch suspect';
+          if (state.signals[i]) return 'ch correct';
+          return 'ch suspect';
+        })}
+      </div>
+    </div>
+    <div class="panel-title">
+      <span class="num">②</span>
+      <span>这个词的位置触发了哪个信号?</span>
+      <span class="word-pin">「${currentWord}」</span>
+    </div>
+    <div class="signal-list">${sigOptions}</div>
+  `;
+
+  const nextLabel = state.mode === 'zhenti' ? '去翻译 →' : '查看解析 →';
+  document.getElementById('drill-actions').innerHTML = `
+    <button class="btn ghost" onclick="backToStep1()">← 重选</button>
+    <button class="btn primary" onclick="goStep3()" ${allDone ? '' : 'disabled'}>${nextLabel}</button>
+  `;
+}
+
+function backToStep1() {
+  state.step = 1;
+  state.signals = {};
+  state.signalActiveSpot = null;
+  renderStep();
+}
+
+function setActiveSpot(i) {
+  if (!state.picks.includes(i)) return;
+  state.signalActiveSpot = i;
+  renderStep2();
+}
+
+function pickSignal(code) {
+  state.signals[state.signalActiveSpot] = code;
+  // 自动跳到下一个未标的词
+  const next = state.picks.find(i => !state.signals[i]);
+  if (next !== undefined) state.signalActiveSpot = next;
+  renderStep2();
+}
+
+function goStep3() {
+  state.step = 3;
+  if (state.mode !== 'zhenti') {
+    // 普通模式直接进验证,这里写入盲区统计
+    recordBlindSpots();
+  }
+  renderStep();
+}
+
+// ===== STEP 3 (真题): 翻译 =====
+function renderStep3Trans() {
+  const q = state.qList[state.qIdx];
+  const body = document.getElementById('drill-body');
+  const src = q.src || `${q.year || ''} ${q.paper || ''}`;
+
+  // 显示句子(标注信号颜色提醒)
+  const sentHTML = getSentenceHTML(q, i => state.picks.includes(i) ? 'ch suspect' : 'ch');
+
+  body.innerHTML = `
+    <div class="sentence-card">
+      <span class="src-tag">${src}</span>
+      <div class="sentence-cn">${sentHTML}</div>
+    </div>
+    <div class="trans-input-card">
+      <div class="ti-label">你的翻译(标红的字要逐字落实)</div>
+      <textarea class="translation" id="user-trans" placeholder="把整句翻译成现代汉语...">${state.userTrans}</textarea>
+      <div class="trans-tip">提示:踩分点要直译,其他部分通顺即可</div>
+    </div>
+  `;
+  // 监听
+  document.getElementById('user-trans').addEventListener('input', e => {
+    state.userTrans = e.target.value;
+  });
+  document.getElementById('drill-actions').innerHTML = `
+    <button class="btn ghost" onclick="state.step = 2; renderStep();">← 返回</button>
+    <button class="btn primary" onclick="goStep4()">对照标准答案 →</button>
+  `;
+}
+
+function goStep4() {
+  state.step = 4;
+  recordBlindSpots();
+  renderStep();
+}
+
+// ===== 盲区统计 =====
+function recordBlindSpots() {
+  const q = state.qList[state.qIdx];
+  q.spots.forEach(spot => {
+    if (!state.blindSpots[spot.signal]) {
+      state.blindSpots[spot.signal] = {miss: 0, total: 0};
+    }
+    state.blindSpots[spot.signal].total++;
+    const userPick = state.picks.includes(spot.tok_idx);
+    const userSig = state.signals[spot.tok_idx];
+    if (!userPick || userSig !== spot.signal) {
+      state.blindSpots[spot.signal].miss++;
+    }
+  });
+  // 标记完成
+  if (!state.done[state.bucketKey]) state.done[state.bucketKey] = [];
+  if (!state.done[state.bucketKey].includes(q.id)) {
+    state.done[state.bucketKey].push(q.id);
+  }
+  saveState();
+}
+
+// ===== STEP 3 (普通) / STEP 4 (真题): 验证 =====
+function renderStep3Verify() { renderVerify(); }
+function renderStep4Verify() { renderVerify(); }
+
+function renderVerify() {
+  const q = state.qList[state.qIdx];
+  const body = document.getElementById('drill-body');
+  const src = q.src || `${q.year || ''} ${q.paper || ''}`;
+
+  // 真实踩分点位置(展开 all_idxs)
+  const realSpotIdxs = new Set();
+  q.spots.forEach(s => (s.all_idxs || [s.tok_idx]).forEach(i => realSpotIdxs.add(i)));
+
+  // 计算得分
+  let correctSpots = 0, correctSignals = 0;
+  q.spots.forEach(spot => {
+    if (state.picks.includes(spot.tok_idx)) {
+      correctSpots++;
+      if (state.signals[spot.tok_idx] === spot.signal) correctSignals++;
+    }
+  });
+  const wrongPicks = state.picks.filter(i => !realSpotIdxs.has(i)).length;
+
+  // 句子高亮
+  const sentHTML = q.tokens.map((t, i) => {
+    if (/^[,。;:、!?,.;:!？！]+$/.test(t)) {
+      return `<span class="ch punct">${t}</span>`;
+    }
+    const isReal = realSpotIdxs.has(i);
+    const isPicked = state.picks.includes(i);
+    let cls = 'ch';
+    if (isReal && isPicked) cls = 'ch correct';
+    else if (isReal && !isPicked) cls = 'ch missed';
+    else if (!isReal && isPicked) cls = 'ch wrong-pick';
+    return `<span class="${cls}">${t}</span>`;
+  }).join('');
+
+  // 翻译对照(真题模式)
+  let transHTML = '';
+  if (state.mode === 'zhenti') {
+    transHTML = `
+      <div class="your-trans-card">
+        <div class="stl">YOUR TRANSLATION</div>
+        <div>${state.userTrans || '<span style="color:var(--slate);font-style:italic;">未填写</span>'}</div>
+      </div>
+      <div class="std-trans-card">
+        <div class="stl">REFERENCE TRANSLATION</div>
+        <div class="stt">${q.trans || ''}</div>
+      </div>
+    `;
+  }
+
+  // 各 spot 解析
+  const spotsHTML = q.spots.map((spot, i) => {
+    const userPicked = state.picks.includes(spot.tok_idx);
+    const userSig = state.signals[spot.tok_idx];
+    const sigCorrect = userSig === spot.signal;
+    const sigInfo = SIGNALS[spot.signal];
+
+    return `
+      <div class="spot-section">
+        <div class="spot-num">点 ${i+1} · ${spot.word}</div>
+        <div class="result-card">
+          <div class="row">
+            <span class="k">你圈了它?</span>
+            <span class="v" style="color:${userPicked ? 'var(--jade)' : 'var(--vermillion)'};">${userPicked ? '✓ 已圈' : '✗ 漏了'}</span>
+          </div>
+          <div class="row">
+            <span class="k">位置信号</span>
+            <span class="v">${sigInfo.name}</span>
+          </div>
+          ${userPicked ? `
+          <div class="row">
+            <span class="k">你的判断</span>
+            <span class="v" style="color:${sigCorrect ? 'var(--jade)' : 'var(--vermillion)'};">
+              ${userSig ? SIGNALS[userSig].name + (sigCorrect ? ' ✓' : ' ✗') : '未选'}
+            </span>
+          </div>
+          ` : ''}
+          <div class="row">
+            <span class="k">类型</span>
+            <span class="v" style="color:${TYPE_COLORS[spot.type]};font-weight:700;">${TYPE_NAMES[spot.type]} · ${spot.subtype}</span>
+          </div>
+          ${spot.classical ? `
+          <div class="row">
+            <span class="k">文言义</span>
+            <span class="v classical">${spot.classical}</span>
+          </div>
+          ` : ''}
+          <div class="why">${spot.why}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const wrongPickWarn = wrongPicks > 0
+    ? `<div class="hint" style="color:var(--vermillion);">⚠ 你多圈了 ${wrongPicks} 个无关的词。扫题不能见字就疑,要相信位置信号。</div>`
+    : '';
+
+  body.innerHTML = `
+    <div class="score-banner">
+      <div class="score">${correctSignals} <span style="color:rgba(255,255,255,0.4);font-size:18px;">/ ${q.spots.length}</span></div>
+      <div class="score-label">完整识别</div>
+      <div class="breakdown">
+        <div class="b-item">
+          <div class="b-num" style="color:var(--jade);">${correctSpots}</div>
+          <div class="b-label">圈对位置</div>
+        </div>
+        <div class="b-item">
+          <div class="b-num" style="color:var(--gold);">${correctSignals}</div>
+          <div class="b-label">指对信号</div>
+        </div>
+        <div class="b-item">
+          <div class="b-num" style="color:${wrongPicks > 0 ? 'var(--vermillion)' : 'var(--paper)'};">${wrongPicks}</div>
+          <div class="b-label">误圈</div>
+        </div>
+      </div>
+    </div>
+    <div class="sentence-card">
+      <span class="src-tag">${src}</span>
+      <div class="sentence-cn">${sentHTML}</div>
+    </div>
+    ${wrongPickWarn}
+    ${transHTML}
+    ${spotsHTML}
+  `;
+
+  const isLast = state.qIdx >= state.qList.length - 1;
+  document.getElementById('drill-actions').innerHTML = `
+    <button class="btn ghost" onclick="exitDrill()">返回</button>
+    ${isLast
+      ? `<button class="btn primary" onclick="navTo('stats')">看盲区 →</button>`
+      : `<button class="btn primary" onclick="nextQ()">下一题 →</button>`
+    }
+  `;
+}
+
+function nextQ() {
+  if (state.qIdx < state.qList.length - 1) {
+    state.qIdx++;
+    loadQ();
+  }
+}
+function prevQ() {
+  if (state.qIdx > 0) {
+    state.qIdx--;
+    loadQ();
+  }
+}
+
+// ===== JUMPER =====
+function openJumper() {
+  const grid = document.getElementById('jumper-grid');
+  const doneList = state.done[state.bucketKey] || [];
+  grid.innerHTML = state.qList.map((q, i) => {
+    let cls = 'jumper-cell';
+    if (doneList.includes(q.id)) cls += ' done';
+    if (i === state.qIdx) cls += ' current';
+    return `<div class="${cls}" onclick="jumpTo(${i})">${i + 1}</div>`;
+  }).join('');
+  document.getElementById('jumper').classList.add('show');
+}
+function closeJumper() {
+  document.getElementById('jumper').classList.remove('show');
+}
+function jumpTo(i) {
+  state.qIdx = i;
+  loadQ();
+  closeJumper();
+}
+
+// ===== SIGNAL REF =====
+function renderSignalRef() {
+  const body = document.getElementById('sig-ref-content');
+  const groups = {
+    huoyong: {label: '词类活用 · 6 个信号', items: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']},
+    yiyi: {label: '古今异义 · 2 个信号', items: ['D1', 'D2']},
+    jushi: {label: '特殊句式 · 1 个信号', items: ['G']},
+    tongjia: {label: '通假 · 1 个信号', items: ['F']}
+  };
+  body.innerHTML = Object.entries(groups).map(([t, g]) => `
+    <div class="sig-ref-group" data-t="${t}">
+      <h3><span class="ch-tag"></span>${g.label}</h3>
+      ${g.items.map(code => {
+        const info = SIGNALS[code];
+        return `
+          <div class="sig-ref-card" data-t="${t}">
+            <div class="sr-name">${info.name}</div>
+            <div class="sr-desc">${info.desc}</div>
+            <div class="sr-hint">${info.hint}</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+// ===== STATS =====
+function renderStats() {
+  const body = document.getElementById('stats-content');
+  const blindEntries = Object.entries(state.blindSpots);
+
+  if (blindEntries.length === 0) {
+    body.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">○</div>
+        <div>还没有训练数据</div>
+        <div style="margin-top:8px; font-size:12px;">完成至少一题后会显示你的盲区分布</div>
+      </div>
+    `;
+    return;
+  }
+
+  const sorted = blindEntries
+    .map(([sig, d]) => ({sig, miss: d.miss, total: d.total, rate: d.miss / d.total}))
+    .sort((a, b) => b.rate - a.rate);
+
+  const totalMiss = sorted.reduce((s, x) => s + x.miss, 0);
+  const totalAll = sorted.reduce((s, x) => s + x.total, 0);
+  const overallHit = ((1 - totalMiss / totalAll) * 100).toFixed(0);
+
+  body.innerHTML = `
+    <div class="stats-card">
+      <h3>总体识别率</h3>
+      <div style="text-align:center; padding:8px 0;">
+        <div style="font-family:'Cormorant Garamond';font-style:italic;font-weight:700;font-size:42px;color:var(--vermillion);line-height:1;">${overallHit}%</div>
+        <div style="font-size:11px;color:var(--slate);margin-top:5px;letter-spacing:1px;">命中 ${totalAll - totalMiss} / ${totalAll} 个踩分点</div>
+      </div>
+    </div>
+    <div class="stats-card">
+      <h3>按信号分类的漏率(高到低)</h3>
+      <div class="blind-list">
+        ${sorted.map(x => `
+          <div class="blind-item">
+            <div>
+              <div class="b-sig">${SIGNALS[x.sig].name}</div>
+              <div style="font-size:10px;color:var(--slate);margin-top:2px;">${SIGNALS[x.sig].desc}</div>
+            </div>
+            <div class="b-rate">${(x.rate * 100).toFixed(0)}%<span style="font-size:10px;color:var(--slate);margin-left:4px;">(${x.miss}/${x.total})</span></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="stats-card" style="background:var(--paper);">
+      <h3 style="color:var(--vermillion);">📌 给你的建议</h3>
+      <p style="font-size:12px;line-height:1.7;color:var(--ink-soft);margin-top:6px;">
+        ${sorted[0].rate > 0.5
+          ? `你最常漏的是<b>${SIGNALS[sorted[0].sig].name}</b>(漏率 ${(sorted[0].rate*100).toFixed(0)}%),建议先去"信号表"看看这个信号的位置特征,再回来重练。`
+          : `识别能力均衡。继续保持,可挑战更高难度。`}
+      </p>
+    </div>
+    <div style="text-align:center; padding:12px;">
+      <button class="back-btn" onclick="resetStats()">清除统计数据</button>
+    </div>
+  `;
+}
+
+function resetStats() {
+  if (!confirm('确认清除所有统计数据(包括各题的完成进度)?')) return;
+  state.blindSpots = {};
+  state.done = {};
+  state.lastIdx = {};
+  saveState();
+  renderStats();
+  showToast('已清除');
+}
+
+// ===== INIT =====
+renderHome();
+
+</script>
+</body>
+</html>
